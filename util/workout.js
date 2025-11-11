@@ -3,6 +3,7 @@ import db from "./database.js";
 db.prepare(
   `CREATE TABLE IF NOT EXISTS workouts(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    userId INTEGER,
     date DATE,
     duration NUMBER,
     notes TEXT,
@@ -13,6 +14,9 @@ export const getWorkouts = () => db.prepare(`SELECT * FROM workouts`).all();
 
 export const getWorkoutById = (id) =>
   db.prepare(`SELECT * FROM workouts WHERE id = ?`).get(id);
+
+export const getWorkoutByUserId = (userId) =>
+  db.prepare(`SELECT * FROM workouts WHERE userId = ?`).get(userId);
 
 export const saveWorkout = (date, duration, notes, userId) =>
   db
