@@ -15,8 +15,8 @@ export const getWorkouts = () => db.prepare(`SELECT * FROM workouts`).all();
 export const getWorkoutById = (id) =>
   db.prepare(`SELECT * FROM workouts WHERE id = ?`).get(id);
 
-export const getWorkoutByUserId = (userId) =>
-  db.prepare(`SELECT * FROM workouts WHERE userId = ?`).get(userId);
+export const getWorkoutsByUserId = (userId) =>
+  db.prepare(`SELECT * FROM workouts WHERE userId = ?`).all(userId);
 
 export const saveWorkout = (date, duration, notes, userId) =>
   db

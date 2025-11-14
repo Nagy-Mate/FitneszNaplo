@@ -27,7 +27,7 @@ router.post("/", (req, res) => {
 
   const savedExercise = Exercise.saveExercise(name);
   if (savedExercise.changes != 1) {
-    return res.status(501).send("Exercise save failed! ");
+    return res.status(500).send("Exercise save failed! ");
   }
   return res
     .status(201)
@@ -46,7 +46,7 @@ router.put("/:id", (req, res) => {
   }
   const savedExercise = Exercise.updateExercise(id, name);
   if (savedExercise.changes != 1) {
-    return res.status(501).send("Exercise update failed");
+    return res.status(500).send("Exercise update failed");
   }
   return res
     .status(200)
@@ -61,7 +61,7 @@ router.delete("/:id", (req, res) => {
   }
   const deletedExercise = Exercise.deleteExercise(id);
   if (deletedExercise.changes != 1) {
-    return res.status(501).send("Exercise delete failed");
+    return res.status(500).send("Exercise delete failed");
   }
   return res.status(204).send("Deleted");
 });

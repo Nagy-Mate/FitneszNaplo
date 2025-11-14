@@ -73,7 +73,7 @@ router.post("/register", async (req, res) => {
 
   const savedUser = User.saveUser(email, hashedPwd);
   if (savedUser.changes != 1) {
-    return res.status(501).send("User save failed! ");
+    return res.status(500).send("User save failed! ");
   }
   user = User.getUsersById(savedUser.lastInsertRowid);
   delete user.password;
@@ -92,7 +92,7 @@ router.delete("/:id", auth, (req, res) => {
 
   const deletedUser = User.deleteUser(id);
   if (deletedUser.changes != 1) {
-    return res.status(501).send("User delete failed! ");
+    return res.status(500).send("User delete failed! ");
   }
   res.status(204).send("Deleted");
 });
