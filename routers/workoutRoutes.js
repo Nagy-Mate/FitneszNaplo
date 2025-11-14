@@ -13,9 +13,7 @@ router.get("/getAll", (req, res) => {
 });
 
 router.get("/", auth, (req, res) => {
-    console.log(req.userId)
   const workouts = Workout.getWorkoutsByUserId(req.userId);
-  console.log(workouts)
   if (workouts.length == 0) {
     return res.status(404).send("Workouts not found");
   }
@@ -34,4 +32,25 @@ router.post("/", auth, (req, res) => {
   return res.status(204).send("Saved");
 });
 
+router.patch("/:id", auth, (req, res) => {
+  const { date, duration, notes } = req.body;
+  const workoutId = req.params.id;
+  const workout = Workout.getWorkoutById(workoutId);
+  if (!workout) {
+    return res.status(404).send("Workout not found");
+  }
+  if (workout.userId != req.userId) {
+    return res.status(401).send("Unauthorized");
+  }
+  const updatedW = Workout.updateWorkout(
+    workout.id,
+    date || workout.date,
+    duration || workout.duration,
+    notes || workout.notes
+  );
+  if (updatedW.changes != 1) {
+    return res.status(500).send("Workout update failed");
+  }
+  return res.status(200);
+});
 export default router;

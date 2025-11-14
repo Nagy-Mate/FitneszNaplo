@@ -25,12 +25,12 @@ export const saveWorkout = (date, duration, notes, userId) =>
     )
     .run(date, duration, notes, userId);
 
-export const updateWorkout = (id, date, duration, notes, userId) =>
+export const updateWorkout = (id, date, duration, notes) =>
   db
     .prepare(
-      `UPDATE workouts SET date = ?, duration = ?, notes = ?, userId = ? WHERE id = ?`
+      `UPDATE workouts SET date = ?, duration = ?, notes = ? WHERE id = ?`
     )
-    .run(date, duration, notes, userId, id);
+    .run(date, duration, notes, id);
 
 export const deleteWorkout = (id) =>
   db.prepare(`DELETE FROM workouts WHERE id = ?`).run(id);
