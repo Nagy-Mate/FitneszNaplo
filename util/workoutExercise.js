@@ -8,7 +8,7 @@ db.prepare(
     sets NUMBER,
     reps NUMBER,
     weight NUMBER,
-    FOREIGN KEY (workoutId) REFERENCES workouts(id),
+    FOREIGN KEY (workoutId) REFERENCES workouts(id) ON DELETE CASCADE,
     FOREIGN KEY (exerciseId) REFERENCES exercises(id))`
 ).run();
 

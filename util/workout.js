@@ -7,7 +7,7 @@ db.prepare(
     date DATE,
     duration NUMBER,
     notes TEXT,
-    FOREIGN KEY (userId) REFERENCES users(id))`
+    FOREIGN KEY (userId) REFERENCES users(id)ON DELETE CASCADE) `
 ).run();
 
 export const getWorkouts = () => db.prepare(`SELECT * FROM workouts`).all();
