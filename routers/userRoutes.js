@@ -1,7 +1,5 @@
 import { Router } from "express";
 import * as User from "../util/user.js";
-import * as Workout from "../util/workout.js";
-import * as WorkoutExercise from "../util/workoutExercise.js";
 import jwt from "jsonwebtoken";
 import auth from "../util/authentication.js";
 import bcrypt from "bcrypt";
@@ -79,7 +77,7 @@ router.post("/register", async (req, res) => {
   }
   user = User.getUsersById(savedUser.lastInsertRowid);
   delete user.password;
-  res.status(200).json(user);
+  res.status(201).json(user);
 });
 
 router.delete("/:id", auth, (req, res) => {
@@ -96,7 +94,7 @@ router.delete("/:id", auth, (req, res) => {
   if (deletedUser.changes != 1) {
     return res.status(501).send("User delete failed! ");
   }
-  res.status(201).send("Deleted");
+  res.status(204).send("Deleted");
 });
 
 export default router;
