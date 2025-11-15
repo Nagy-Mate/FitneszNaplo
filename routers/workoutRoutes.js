@@ -4,7 +4,7 @@ import auth from "../util/authentication.js";
 
 const router = Router();
 
-router.get("/getAll", (req, res) => {
+router.get("/all", (req, res) => {
   const workouts = Workout.getWorkouts();
   if (workouts.length == 0) {
     return res.status(404).send("Workouts not found");
@@ -51,6 +51,21 @@ router.patch("/:id", auth, (req, res) => {
   if (updatedW.changes != 1) {
     return res.status(500).send("Workout update failed");
   }
-  return res.status(200);
+  return res.status(204).send("Updated");
 });
+
+router.delete("/:id", auth, (req, res) =>{
+  const workout = Workout.getWorkoutById(req.params.id)
+  if(!workout){
+    return  res.status(404).send("Workout not found")
+  }
+  if(workout.userId != req.userId){
+    return res.status(401).send("Unauthorized");
+  }
+  const deletedW = Workout.deleteWorkout(workout.id);
+  if(deletedW.changes != 1){
+    return res.status(500).send("Workout delete failed")
+  }
+  return res.status(204).send("Deleted")
+})
 export default router;
