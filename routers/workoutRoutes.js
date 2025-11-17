@@ -12,6 +12,14 @@ router.get("/all", (req, res) => {
   return res.status(200).send(workouts);
 });
 
+router.get("/:id", (req, res) =>{
+  const workout = Workout.getWorkoutById(req.params.id);
+    if (!workout) {
+      return res.status(404).send("Workout not found! ");
+    }
+    return res.status(200).send(workout);
+})
+
 router.get("/", auth, (req, res) => {
   const workouts = Workout.getWorkoutsByUserId(req.userId);
   if (workouts.length == 0) {
