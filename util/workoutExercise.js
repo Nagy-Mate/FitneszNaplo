@@ -18,10 +18,10 @@ export const getWorkoutExercises = () =>
 export const getWorkoutExerciseById = (id) =>
   db.prepare(`SELECT * FROM workoutExercises WHERE id = ?`).get(id);
 
-export const getWorkoutExerciseByWorkoutId = (workoutId) =>
+export const getWorkoutExercisesByWorkoutId = (workoutId) =>
   db
     .prepare(`SELECT * FROM workoutExercises WHERE workoutId = ?`)
-    .get(workoutId);
+    .all(workoutId);
 
 export const getWorkoutExerciseByUserId = (userId) =>
   db

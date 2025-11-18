@@ -14,12 +14,16 @@ router.get("/all", (req, res) => {
   return res.status(200).send(workoutExercises);
 });
 
-router.get("/:id", (req, res) => {
+router.get("/:id", auth, (req, res) => {
   const workoutExercises = WorkoutExercise.getWorkoutExerciseById(
     req.params.id
   );
   if (!workoutExercises) {
     return res.status(404).send("Not found! ");
+  }
+  const workout = Workout.getWorkoutById(WorkoutExercise.workoutId);
+  if(workout.userId != req.userId){
+    return res.status(401).send("Unauthorized")
   }
   return res.status(200).send(workoutExercises);
 });
@@ -37,7 +41,7 @@ router.get("/", auth, (req, res) => {
 router.post("/", auth, (req, res) => {
   const { workoutId, exerciseId, sets, reps, weight } = req.body;
   if (!workoutId || !exerciseId || !sets || !reps || !weight) {
-    return res.status(404).send("Missing some data");
+    return res.status(400).send("Missing some data");
   }
   const exercise = Exercise.getExerciseById(exerciseId);
   if (!exercise) {

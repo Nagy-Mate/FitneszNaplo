@@ -31,7 +31,7 @@ router.post("/", (req, res) => {
   }
   return res
     .status(201)
-    .send({ id: savedExercise.lastInsertRowid, name: name });
+    .send({ id, name});
 });
 
 router.put("/:id", (req, res) => {
@@ -50,7 +50,7 @@ router.put("/:id", (req, res) => {
   }
   return res
     .status(200)
-    .send({ id: savedExercise.lastInsertRowid, name: name });
+    .send({ id, name });
 });
 
 router.delete("/:id", (req, res) => {
