@@ -5,7 +5,7 @@ db.prepare(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     userId INTEGER,
     date DATE,
-    duration NUMBER,
+    duration INTEGER,
     notes TEXT,
     FOREIGN KEY (userId) REFERENCES users(id)ON DELETE CASCADE) `
 ).run();

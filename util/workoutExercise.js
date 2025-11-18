@@ -5,9 +5,9 @@ db.prepare(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     workoutId INTEGER,
     exerciseId INTEGER,
-    sets NUMBER,
-    reps NUMBER,
-    weight NUMBER,
+    sets INTEGER,
+    reps INTEGER,
+    weight INTEGER,
     FOREIGN KEY (workoutId) REFERENCES workouts(id) ON DELETE CASCADE,
     FOREIGN KEY (exerciseId) REFERENCES exercises(id))`
 ).run();
