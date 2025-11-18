@@ -23,6 +23,13 @@ export const getWorkoutExerciseByWorkoutId = (workoutId) =>
     .prepare(`SELECT * FROM workoutExercises WHERE workoutId = ?`)
     .get(workoutId);
 
+export const getWorkoutExerciseByUserId = (userId) =>
+  db
+    .prepare(
+      `SELECT workoutExercises.* FROM workoutExercises JOIN workouts ON workoutExercises.workoutId = workouts.id WHERE workouts.userId = ?`
+    )
+    .all(userId);
+
 export const saveWorkoutExercise = (
   sets,
   reps,
