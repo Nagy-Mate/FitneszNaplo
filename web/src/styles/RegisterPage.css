@@ -1,0 +1,164 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+.login-container {
+  background: #ececec;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.login-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  padding: 40px 60px;
+  text-align: center;
+  width: 460px;
+  animation: fadeIn 0.8s ease;
+}
+.logo {
+  width: 80px;
+  margin-bottom: 10px;
+}
+
+.title {
+  color: #d62828;
+  font-size: 28px;
+  margin-bottom: 6px;
+}
+.input-group {
+  position: relative;
+  width: 100%;
+}
+.input-group input {
+  width: 100%;
+  padding: 12px 40px 12px 12px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 15px;
+}
+.input-icon {
+  position: absolute;
+  right: 12px;
+  top: 35%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.input-icon.valid {
+  color: limegreen;
+}
+
+.input-icon.invalid {
+  color: red;
+}
+.login-form input:focus {
+  outline: none;
+  border-color: #d62828;
+  box-shadow: 0 0 4px rgba(214, 40, 40, 0.5);
+}
+.login-form button {
+  width: 100%;
+  padding: 12px;
+  background-color: #d62828;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  border: 1px solid #ccc;
+  transition: background-color 0.3s;
+}
+.login-form button:hover {
+  background-color: #a81f1f;
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.instructions {
+  font-size: 0.9rem;
+  background-color: #fff4f4;
+  color: #b22222;
+  border-left: 4px solid #d62828;
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin-top: -8px;
+  margin-bottom: 10px;
+  text-align: left;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.instructions > svg {
+  margin-right: 6px;
+  color: #d62828;
+}
+
+.instructions span {
+  font-weight: 600;
+}
+
+.offscreen {
+  position: absolute;
+  left: -9999px;
+}
+
+.hide {
+  display: none;
+}
+
+.valid {
+  color: limegreen;
+  margin-left: 0.25rem;
+}
+
+.invalid {
+  color: red;
+  margin-left: 0.25rem;
+}
+
+.errmsg {
+  background-color: lightpink;
+  color: firebrick;
+  font-weight: bold;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.line {
+  display: inline-block;
+}
+.signin-text {
+  margin-top: 20px;
+  font-size: 14px;
+  color: #555;
+}
+
+.signin-text a {
+  color: #d62828;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.signin-text a:hover {
+  text-decoration: underline;
+}
+
+.login-form button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}

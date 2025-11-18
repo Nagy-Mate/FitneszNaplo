@@ -10,6 +10,7 @@ const PORT = 3000;
 const app = express();
 app.use(express.json());
 app.use(cors());
+app.use(express.static("front"));
 
 app.use("/users", userRoutes)
 app.use("/workouts", workoutRoutes)
