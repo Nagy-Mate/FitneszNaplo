@@ -7,8 +7,7 @@ import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { faTimes } from "@fortawesome/free-solid-svg-icons/faTimes";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faInfoCircle } from "@fortawesome/free-solid-svg-icons/faInfoCircle";
-import icon from "../assets/fitIcon.png"
-
+import icon from "../assets/fitIcon.png";
 
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -132,7 +131,6 @@ const RegisterPage = () => {
             <h1 className="title">Register</h1>
 
             <form className="form" onSubmit={handleSubmit}>
-
               <div className="input-group">
                 <input
                   type="text"
@@ -248,9 +246,7 @@ const RegisterPage = () => {
 
               <button
                 disabled={
-                  !validPwd || !validEmail || !validMatch
-                    ? true
-                    : false
+                  !validPwd || !validEmail || !validMatch ? true : false
                 }
               >
                 Sign Up

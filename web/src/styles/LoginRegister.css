@@ -1,11 +1,8 @@
 * {
   box-sizing: border-box;
 }
-
-body {
-  display: flex;
-  justify-content: center;
-  background-color: #ececec;
+#root{
+  width: 100%;
 }
 
 .login-container {
@@ -13,6 +10,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: #ececec;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   margin: auto;
 }

@@ -4,6 +4,7 @@ import apiClient from "../api/apiClient";
 import type { Workout } from "../types/Workout";
 import { toast } from "react-toastify";
 import type { AxiosError } from "axios";
+import "../styles/MainPage.css"
 
 function MainPage() {
   const { auth } = useAuth();
@@ -48,10 +49,27 @@ function MainPage() {
   }, []);
   return (
     <>
-      <h1>Main page xd</h1>
-      {workouts?.map((w) => (
-        <p>{w.id + " " + w.duration + " " + w.date}</p>
-      ))}
+   <div className="workout-container">
+      <h2 className="workout-title">My Workouts</h2>
+
+      <div className="workout-grid">
+        {workouts?.map((w) => (
+          <div key={w.id} className="workout-card">
+            <div className="workout-date">
+              📅 {new Date(w.date).toLocaleDateString()}
+            </div>
+
+            <div className="workout-duration">
+              ⏱️ Duration: <span>{w.duration} min</span>
+            </div>
+
+            <div className="workout-notes">
+              📝 {w.notes || "No notes added"}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
     </>
   );
 }
