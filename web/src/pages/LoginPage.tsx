@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import logo from "../assets/RedCupLogo.png";
 import "../styles/LoginPage.css";
 import { Link } from "react-router";
 import apiClient from "../api/apiClient.tsx";
@@ -35,7 +34,7 @@ function LoginPage() {
       setAuth({
         accessToken: response.data.token,
         email: email,
-      });
+     });
 
       setEmail("");
       setPwd("");
@@ -62,7 +61,7 @@ function LoginPage() {
           {errMsg}{" "}
         </p>
 
-        <img src={logo} alt="App logo" className="logo" />
+        <img alt="App logo" className="logo" />
         <h1 className="title">RedCup</h1>
         <p className="subtitle">Lépj be, és kezdődhet a buli!</p>
 

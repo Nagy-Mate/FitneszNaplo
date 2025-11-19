@@ -1,10 +1,13 @@
 
 import { useEffect, useRef, useState } from "react";
 import "../styles/RegisterPage.css";
-import logo from "../assets/RedCupLogo.png";
 import { Link, useNavigate } from "react-router";
 import apiClient from "../api/apiClient.tsx";
 import type { AxiosError } from "axios";
+import { faCheck } from "@fortawesome/free-solid-svg-icons";
+import { faTimes } from "@fortawesome/free-solid-svg-icons/faTimes";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faInfoCircle } from "@fortawesome/free-solid-svg-icons/faInfoCircle";
 
 
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
@@ -124,7 +127,7 @@ const RegisterPage = () => {
               {errMsg}{" "}
             </p>
 
-            <img src={logo} alt="App logo" className="logo" />
+            <img alt="App logo" className="logo" />
 
             <h1 className="title">Register</h1>
 
