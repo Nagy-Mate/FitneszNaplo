@@ -1,6 +1,5 @@
-
 import { useEffect, useRef, useState } from "react";
-import "../styles/RegisterPage.css";
+import "../styles/LoginRegister.css";
 import { Link, useNavigate } from "react-router";
 import apiClient from "../api/apiClient.tsx";
 import type { AxiosError } from "axios";
@@ -8,6 +7,7 @@ import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { faTimes } from "@fortawesome/free-solid-svg-icons/faTimes";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faInfoCircle } from "@fortawesome/free-solid-svg-icons/faInfoCircle";
+import icon from "../assets/fitIcon.png"
 
 
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
@@ -99,7 +99,7 @@ const RegisterPage = () => {
     return (
       <p>
         Redirect to{" "}
-        <span className="signin-text">
+        <span className="s-text">
           <Link to={"/login"}>Login</Link>
         </span>{" "}
         in {countdown} s
@@ -127,11 +127,11 @@ const RegisterPage = () => {
               {errMsg}{" "}
             </p>
 
-            <img alt="App logo" className="logo" />
+            <img alt="App logo" src={icon} className="logo" />
 
             <h1 className="title">Register</h1>
 
-            <form className="login-form" onSubmit={handleSubmit}>
+            <form className="form" onSubmit={handleSubmit}>
 
               <div className="input-group">
                 <input
@@ -256,7 +256,7 @@ const RegisterPage = () => {
                 Sign Up
               </button>
             </form>
-            <p className="signin-text">
+            <p className="s-text">
               Already registered?
               <Link to={"/login"}> Sign in </Link>
             </p>

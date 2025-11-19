@@ -1,18 +1,20 @@
-*,
-*::before,
-*::after {
+* {
   box-sizing: border-box;
 }
 
+body {
+  display: flex;
+  justify-content: center;
+  background-color: #ececec;
+}
+
 .login-container {
-  background: #ececec;
   height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  margin:  auto;
-
+  margin: auto;
 }
 
 .login-card {
@@ -24,16 +26,53 @@
   width: 460px;
   animation: fadeIn 0.8s ease;
 }
+
 .logo {
   width: 80px;
   margin-bottom: 10px;
 }
 
 .title {
-  color: #d62828;
+  color: #28a2d6;
   font-size: 28px;
   margin-bottom: 6px;
 }
+.subtitle {
+  color: #555;
+  margin-bottom: 30px;
+}
+.form input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 15px;
+}
+
+.form input:focus {
+  outline: none;
+  border-color: #28a2d6;
+  box-shadow: 0 0 4px #106e96;
+}
+
+.form button {
+  width: 100%;
+  padding: 12px;
+  background-color: #28a2d6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  border: 1px solid #ccc;
+  transition: background-color 0.3s;
+}
+
+.form button:hover {
+  background-color: #138ec2;
+}
+
 .input-group {
   position: relative;
   width: 100%;
@@ -61,35 +100,21 @@
 .input-icon.invalid {
   color: red;
 }
-.login-form input:focus {
-  outline: none;
-  border-color: #d62828;
-  box-shadow: 0 0 4px rgba(214, 40, 40, 0.5);
+
+.s-text {
+  margin-top: 20px;
+  font-size: 14px;
+  color: #555;
 }
-.login-form button {
-  width: 100%;
-  padding: 12px;
-  background-color: #d62828;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  cursor: pointer;
-  border: 1px solid #ccc;
-  transition: background-color 0.3s;
+
+.s-text a {
+  color: #28a2d6;
+  text-decoration: none;
+  font-weight: bold;
 }
-.login-form button:hover {
-  background-color: #a81f1f;
-}
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+
+.s-text a:hover {
+  text-decoration: underline;
 }
 .instructions {
   font-size: 0.9rem;
@@ -144,23 +169,19 @@
 .line {
   display: inline-block;
 }
-.signin-text {
-  margin-top: 20px;
-  font-size: 14px;
-  color: #555;
-}
 
-.signin-text a {
-  color: #d62828;
-  text-decoration: none;
-  font-weight: bold;
-}
-
-.signin-text a:hover {
-  text-decoration: underline;
-}
-
-.login-form button:disabled {
+.form button:disabled {
   background-color: #ccc;
   cursor: not-allowed;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

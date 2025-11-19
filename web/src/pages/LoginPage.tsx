@@ -1,12 +1,14 @@
 import { useEffect, useRef, useState } from "react";
-import "../styles/LoginPage.css";
-import { Link } from "react-router";
+import "../styles/LoginRegister.css";
+import { Link, useNavigate } from "react-router";
 import apiClient from "../api/apiClient.tsx";
 import type { AxiosError } from "axios";
 import { useAuth } from "../auth/AuthProvider";
+import icon from "../assets/fitIcon.png";
 
 function LoginPage() {
   const { setAuth } = useAuth();
+  const navigate = useNavigate();
 
   const userRef = useRef<HTMLInputElement>(null);
   const errRef = useRef<HTMLInputElement>(null);
@@ -29,12 +31,17 @@ function LoginPage() {
     try {
       const response = await apiClient.post(
         "/users/login",
-        JSON.stringify({ email, password: pwd})
+        JSON.stringify({ email, password: pwd })
       );
-      setAuth({
-        accessToken: response.data.token,
-        email: email,
-     });
+  
+      if (response.status == 200) {
+        setAuth({
+          accessToken: response.data.token,
+          email: email,
+        });
+
+        navigate("/home");
+      }
 
       setEmail("");
       setPwd("");
@@ -61,11 +68,11 @@ function LoginPage() {
           {errMsg}{" "}
         </p>
 
-        <img alt="App logo" className="logo" />
-        <h1 className="title">RedCup</h1>
-        <p className="subtitle">Lépj be, és kezdődhet a buli!</p>
+        <img alt="App logo" src={icon} className="logo" />
+        <h1 className="title">Fit Notes</h1>
+        <p className="subtitle">Lépj be!</p>
 
-        <form className="login-form" onSubmit={handleSubmit}>
+        <form className="form" onSubmit={handleSubmit}>
           <input
             type="text"
             ref={userRef}
@@ -84,10 +91,8 @@ function LoginPage() {
           />
           <button>Sign in</button>
         </form>
-        <Link to={"/homePage"}>
-          <button className="skip-button">Skip </button>
-        </Link>
-        <p className="signup-text">
+
+        <p className="s-text">
           Need an account? <Link to={"/register"}>Sign up</Link>
         </p>
       </section>
