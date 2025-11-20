@@ -14,7 +14,7 @@ router.get("/all", (req, res) => {
   return res.status(200).send(workoutExercises);
 });
 
-router.get("/:id", auth, (req, res) => {
+router.get("/byId/:id", auth, (req, res) => {
   const workoutExercises = WorkoutExercise.getWorkoutExerciseById(
     req.params.id
   );
@@ -22,9 +22,27 @@ router.get("/:id", auth, (req, res) => {
     return res.status(404).send("Not found! ");
   }
   const workout = Workout.getWorkoutById(WorkoutExercise.workoutId);
-  if(workout.userId != req.userId){
-    return res.status(401).send("Unauthorized")
+  if (workout.userId != req.userId) {
+    return res.status(401).send("Unauthorized");
   }
+  return res.status(200).send(workoutExercises);
+});
+
+router.get("/byWorkoutId/:id", auth, (req, res) => {
+  const workout = Workout.getWorkoutById(req.params.id);
+  if(!workout){
+    return res.status(404).send("Workout not found")
+  }
+  if (workout.userId != req.userId) {
+    return res.status(401).send("Unauthorized");
+  }
+  const workoutExercises = WorkoutExercise.getWorkoutExercisesByWorkoutId(
+    req.params.id
+  );
+  if (!workoutExercises) {
+    return res.status(404).send("Not found! ");
+  }
+
   return res.status(200).send(workoutExercises);
 });
 
@@ -101,26 +119,26 @@ router.patch("/:id", auth, (req, res) => {
     workoutId || workoutE.workoutId,
     exerciseId || workoutE.exerciseId
   );
-  if(updatedWE.changes !== 1){
-    return res.status(500).send("Update failed")
+  if (updatedWE.changes !== 1) {
+    return res.status(500).send("Update failed");
   }
-  return res.status(204).send("Updated")
+  return res.status(204).send("Updated");
 });
 
-router.delete("/:id", auth, (req, res) =>{
+router.delete("/:id", auth, (req, res) => {
   const workoutE = WorkoutExercise.getWorkoutExerciseById(req.params.id);
-  if(!workoutE){
-    return res.status(404).send("Not found")
+  if (!workoutE) {
+    return res.status(404).send("Not found");
   }
   const workout = Workout.getWorkoutById(workoutE.workoutId);
-  if(workout.userId != req.userId){
-    return res.status(401).send("Unauthorized")
+  if (workout.userId != req.userId) {
+    return res.status(401).send("Unauthorized");
   }
-  const deletedWE = WorkoutExercise.deleteWorkoutExercise(workoutE.id)
-  if(deletedWE.changes !== 1){
-    return res.status(500).send("Delete Failed")
+  const deletedWE = WorkoutExercise.deleteWorkoutExercise(workoutE.id);
+  if (deletedWE.changes !== 1) {
+    return res.status(500).send("Delete Failed");
   }
-  return res.status(204).send("Deleted")
-})
+  return res.status(204).send("Deleted");
+});
 
 export default router;
