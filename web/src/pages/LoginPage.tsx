@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import  "../styles/LoginRegister.css";
+import "../styles/LoginRegister.css";
 import { Link, useNavigate } from "react-router";
 import apiClient from "../api/apiClient.tsx";
 import type { AxiosError } from "axios";
-import { useAuth } from "../auth/AuthProvider";
+import { useAuth } from "../context/AuthProvider.tsx";
 import icon from "../assets/fitIcon.png";
 
 function LoginPage() {
@@ -33,11 +33,11 @@ function LoginPage() {
         "/users/login",
         JSON.stringify({ email, password: pwd })
       );
-  
+
       if (response.status == 200) {
         setAuth({
           accessToken: response.data.token,
-          email: email,
+          email: email
         });
 
         navigate("/home");
@@ -47,6 +47,8 @@ function LoginPage() {
       setPwd("");
     } catch (err) {
       const error = err as AxiosError;
+      setEmail("")
+      setPwd("")
       if (!error.response) {
         setErrMsg("No Server Response");
       } else if (error.response?.status === 401) {

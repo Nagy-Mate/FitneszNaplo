@@ -3,7 +3,9 @@
 }
 #root{
   width: 100%;
+  height: 100vh;
 }
+
 
 .login-container {
   height: 100vh;

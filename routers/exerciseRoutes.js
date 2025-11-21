@@ -31,7 +31,7 @@ router.post("/", (req, res) => {
   }
   return res
     .status(201)
-    .send({ id, name});
+    .send({ name});
 });
 
 router.put("/:id", (req, res) => {

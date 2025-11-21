@@ -1,0 +1,46 @@
+.workout-container {
+  max-width: 900px;
+  margin: 30px auto;
+  font-family: "Segoe UI", sans-serif;
+}
+
+.workout-card {
+  background: #fff;
+  padding: 25px;
+  border-radius: 14px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.workout-title {
+  margin-bottom: 15px;
+  color: #1e88e5;
+}
+
+.exercise-subtitle {
+  margin-top: 20px;
+  margin-bottom: 10px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.exercise-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 15px;
+}
+
+.exercise-card {
+  background: #f7f9fc;
+  padding: 15px;
+  border-radius: 10px;
+  border: 1px solid #e3e6ee;
+}
+
+.exercise-name {
+  margin-bottom: 8px;
+  color: #333;
+  font-weight: 600;
+}
+.btn-primary{
+    margin: 10px;
+}

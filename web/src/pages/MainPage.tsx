@@ -1,75 +1,143 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "../auth/AuthProvider";
+import { useAuth } from "../context/AuthProvider";
 import apiClient from "../api/apiClient";
 import type { Workout } from "../types/Workout";
 import { toast } from "react-toastify";
 import type { AxiosError } from "axios";
-import "../styles/MainPage.css"
+import "../styles/Main.css";
+import { Link, useNavigate } from "react-router-dom";
+import { isTokenExpired } from "../utils/tokenCheck";
 
 function MainPage() {
   const { auth } = useAuth();
+  const navigate = useNavigate();
 
   const [workouts, setWorkouts] = useState<Array<Workout>>();
 
   useEffect(() => {
-    (async () => {
-      console.log(auth.accessToken);
-      try {
-        const res = await apiClient.get("/workouts", {
-          headers: {
-            Authorization: `Beare ${auth.accessToken}`,
-          },
-        });
-        console.log(res.status);
-        if (res.status === 200) {
-          setWorkouts(res.data);
-        }
-      } catch (err) {
-        const error = err as AxiosError;
-        console.error(error);
-        if (error.status === 404) {
-          if (!toast.isActive("loginErr")) {
-            toast.info("Workouts not found", { toastId: "loginErr" });
+    if (!auth.accessToken || isTokenExpired(auth.accessToken)) {
+      navigate("/login");
+    } else {
+      (async () => {
+        try {
+          const res = await apiClient.get("/workouts", {
+            headers: {
+              Authorization: `Beare ${auth.accessToken}`,
+            },
+          });
+
+          if (res.status === 200) {
+            setWorkouts(res.data);
           }
-        } else if (error.status === 401) {
-          if (!toast.isActive("loginErr")) {
-            toast.error("Unauthorized", { toastId: "loginErr" });
-          }
-        } else if (error.status === 403) {
-          if (!toast.isActive("loginErr")) {
-            toast.error("Access denied", { toastId: "loginErr" });
-          }
-        } else {
-          if (!toast.isActive("loginErr")) {
-            toast.error("Server error", { toastId: "loginErr" });
+        } catch (err) {
+          const error = err as AxiosError;
+
+          if (error.status === 404) {
+            if (!toast.isActive("loginErr")) {
+              toast.info("Workouts not found", { toastId: "loginErr" });
+            }
+          } else if (error.status === 401) {
+            navigate("/login");
+          } else if (error.status === 403) {
+            navigate("/login");
+          } else {
+            navigate("/login");
           }
         }
-      }
-    })();
+      })();
+    }
   }, []);
   return (
     <>
-   <div className="workout-container">
-      <h2 className="workout-title">My Workouts</h2>
-
-      <div className="workout-grid">
-        {workouts?.map((w) => (
-          <div key={w.id} className="workout-card">
-            <div className="workout-date">
-              📅 {new Date(w.date).toLocaleDateString()}
+      <nav className="navbar bg-body-tertiary fixed-top">
+        <div className="container-fluid">
+          <a className="navbar-brand" href="#">
+            Navbar...
+          </a>
+          <button
+            className="navbar-toggler"
+            type="button"
+            data-bs-toggle="offcanvas"
+            data-bs-target="#offcanvasNavbar"
+            aria-controls="offcanvasNavbar"
+            aria-label="Toggle navigation"
+          >
+            <span className="navbar-toggler-icon"></span>
+          </button>
+          <div
+            className="offcanvas offcanvas-end"
+            id="offcanvasNavbar"
+            aria-labelledby="offcanvasNavbarLabel"
+          >
+            <div className="offcanvas-header">
+              <h5 className="offcanvas-title" id="offcanvasNavbarLabel">
+                Workouts
+              </h5>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="offcanvas"
+                aria-label="Close"
+              ></button>
             </div>
-
-            <div className="workout-duration">
-              ⏱️ Duration: <span>{w.duration} min</span>
-            </div>
-
-            <div className="workout-notes">
-              📝 {w.notes || "No notes added"}
+            <div className="offcanvas-body">
+              <ul className="navbar-nav justify-content-end flex-grow-1 pe-3">
+                <li className="nav-item">
+                  <Link
+                    className="nav-link active"
+                    aria-current="page"
+                    to={"/home"}
+                  >
+                    Home
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to={"/create"}>
+                    Create workout
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to={"/profile"}>
+                    Profile Page
+                  </Link>
+                </li>
+              </ul>
+              <form className="d-flex mt-3" role="search">
+                <input
+                  className="form-control me-2"
+                  type="search"
+                  placeholder="Search"
+                  aria-label="Search"
+                />
+                <button className="btn btn-outline-success" type="submit">
+                  Search
+                </button>
+              </form>
             </div>
           </div>
-        ))}
+        </div>
+      </nav>
+      <div className="workout-container">
+        <h2 className="workout-title">My Workouts</h2>
+
+        <div className="workout-grid">
+          {workouts?.map((w) => (
+            <Link to={`/workout/${w.id}`} key={w.id} className="workout-card">
+              <div className="workout-date">
+                📅 {new Date(w.date).toLocaleDateString()}
+              </div>
+
+              <div className="workout-duration">
+                ⏱️ Duration: <span>{w.duration} min</span>
+              </div>
+
+              <div className="workout-notes">
+                📝 {w.notes || "No notes added"}
+              </div>
+            </Link>
+          ))}
+        </div>
       </div>
-    </div>
     </>
   );
 }

@@ -51,8 +51,10 @@ const RegisterPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const v2 = EMAIL_REGEX.test(email);
-    const v3 = PWD_REGEX.test(pwd);
+    const password = pwd.trim();
+    const email2 = email.trim()
+    const v2 = EMAIL_REGEX.test(email2);
+    const v3 = PWD_REGEX.test(password);
     if (!v2 || !v3) {
       setErrMsg("Invalid Entry");
       return;
@@ -60,7 +62,7 @@ const RegisterPage = () => {
     try {
       await apiClient.post(
         "/users/register",
-        JSON.stringify({ password: pwd, email })
+        JSON.stringify({ password, email })
       );
       setSuccess(true);
 
@@ -137,7 +139,7 @@ const RegisterPage = () => {
                   placeholder="Email"
                   id="email"
                   autoComplete="off"
-                  onChange={(e) => setEmail(e.target.value.trim())}
+                  onChange={(e) => setEmail(e.target.value)}
                   required
                   aria-invalid={validEmail ? "false" : "true"}
                   aria-describedby="uidnote"
@@ -173,7 +175,7 @@ const RegisterPage = () => {
                   type="password"
                   placeholder="Password"
                   id="password"
-                  onChange={(e) => setPwd(e.target.value.trim())}
+                  onChange={(e) => setPwd(e.target.value)}
                   value={pwd}
                   required
                   aria-invalid={validPwd ? "false" : "true"}
@@ -215,7 +217,7 @@ const RegisterPage = () => {
                   type="password"
                   placeholder="Confirm Password"
                   id="confirm_pwd"
-                  onChange={(e) => setMatchPwd(e.target.value.trim())}
+                  onChange={(e) => setMatchPwd(e.target.value)}
                   value={matchPwd}
                   required
                   aria-invalid={validMatch ? "false" : "true"}
@@ -244,7 +246,7 @@ const RegisterPage = () => {
                 Must match the first password input field.
               </p>
 
-              <button
+              <button 
                 disabled={
                   !validPwd || !validEmail || !validMatch ? true : false
                 }
