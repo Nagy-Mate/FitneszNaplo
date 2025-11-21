@@ -12,7 +12,7 @@ import { isTokenExpired } from "../utils/tokenCheck";
 
 function WorkoutPage() {
   const { id } = useParams();
-  const { auth } = useAuth();
+  const { auth, logout } = useAuth();
   const navigate = useNavigate();
 
   const [workout, setWorkout] = useState<Workout>();
@@ -21,8 +21,8 @@ function WorkoutPage() {
 
   useEffect(() => {
     if (!auth.accessToken || isTokenExpired(auth.accessToken)) {
+      logout();
       navigate("/login");
-      
     } else {
       (async () => {
         await apiClient
@@ -39,10 +39,9 @@ function WorkoutPage() {
           .catch((e) => {
             const error = e as AxiosError;
 
-            if (error.status === 404) {
-              if (!toast.isActive("404Erro")) {
-                toast.error("Workout not found", { toastId: "404Erro" });
-              }
+            if (error.status === 404 && !toast.isActive("404Erro")) {
+              toast.error("Workout not found", { toastId: "404Erro" });
+
               navigate("/home");
             } else {
               if (!toast.isActive("err")) {

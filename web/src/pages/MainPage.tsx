@@ -9,13 +9,14 @@ import { Link, useNavigate } from "react-router-dom";
 import { isTokenExpired } from "../utils/tokenCheck";
 
 function MainPage() {
-  const { auth } = useAuth();
+  const { auth, logout } = useAuth();
   const navigate = useNavigate();
 
   const [workouts, setWorkouts] = useState<Array<Workout>>();
 
   useEffect(() => {
     if (!auth.accessToken || isTokenExpired(auth.accessToken)) {
+      logout();
       navigate("/login");
     } else {
       (async () => {
@@ -47,6 +48,11 @@ function MainPage() {
       })();
     }
   }, []);
+
+  const logoutBtn = ()=>{
+    logout();
+    navigate("/login")
+  }
   return (
     <>
       <nav className="navbar bg-body-tertiary fixed-top">
@@ -100,6 +106,11 @@ function MainPage() {
                   <Link className="nav-link" to={"/profile"}>
                     Profile Page
                   </Link>
+                </li>
+                <li className="nav-item">
+                  <a className="nav-link" onClick={logoutBtn}>
+                    Log out
+                  </a>
                 </li>
               </ul>
               <form className="d-flex mt-3" role="search">

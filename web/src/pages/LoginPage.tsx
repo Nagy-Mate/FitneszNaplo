@@ -36,8 +36,7 @@ function LoginPage() {
 
       if (response.status == 200) {
         setAuth({
-          accessToken: response.data.token,
-          email: email
+          accessToken: response.data.token
         });
 
         navigate("/home");

@@ -36,6 +36,7 @@ function ProfilePage() {
 
   useEffect(() => {
     if (!auth.accessToken || isTokenExpired(auth.accessToken)) {
+      logout();
       navigate("/login");
     }
   }, []);
@@ -52,9 +53,10 @@ function ProfilePage() {
 
   const changePwd = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("clicked");
+
     const password = pwd.trim();
     const v3 = PWD_REGEX.test(password);
+
     if (!v3 && !toast.isActive("invalidPwd")) {
       toast.error("Invalid password", { toastId: "invalidPwd" });
       return;
@@ -73,6 +75,7 @@ function ProfilePage() {
         });
     } catch (err) {
       const error = err as AxiosError;
+
       if (!error.response && !toast.isActive("pwdErr")) {
         toast.error("No Server Response", { toastId: "pwdErr" });
       } else if (error.status === 401 && !toast.isActive("pwdErr")) {
@@ -88,12 +91,15 @@ function ProfilePage() {
 
   const changeEmail = async (e: React.FormEvent) => {
     e.preventDefault();
+
     const email2 = email.trim();
     const v2 = EMAIL_REGEX.test(email2);
+
     if (!v2 && !toast.isActive("invalidEmail")) {
       toast.error("Invalid Email", { toastId: "invalidEmail" });
       return;
     }
+
     try {
       await apiClient
         .patch(`/users/${auth.id}`, JSON.stringify({ email: email2 }), {
@@ -125,10 +131,12 @@ function ProfilePage() {
     confirmAlert({
       title: "Are you sure to delete this user.",
       message: "Confirm to submit",
+
       buttons: [
         {
           label: "Yes",
           onClick: async () => {
+            console.log(auth.accessToken, "\n", auth.id, auth.email);
             await apiClient
               .delete(`/users/${auth.id}`, {
                 headers: { Authorization: `Bearer ${auth.accessToken}` },
@@ -136,8 +144,8 @@ function ProfilePage() {
               .then((res) => {
                 if (res.status === 204 && !toast.isActive("delUser")) {
                   toast.success("User deleted", { toastId: "delUser" });
-                  logout
-                  navigate("login");
+                  logout();
+                  navigate("/login");
                 }
               })
               .catch((e) => {

@@ -6,6 +6,12 @@ import {
   type ReactNode,
   useEffect,
 } from "react";
+import { jwtDecode } from "jwt-decode";
+
+interface JwtPayload {
+  id: number;
+  email: string;
+}
 
 interface AuthState {
   accessToken?: string;
@@ -24,44 +30,31 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [auth, setAuth] = useState<AuthState>(() => {
     const token = localStorage.getItem("token");
-    const email = localStorage.getItem("email");
-    const id = localStorage.getItem("id");
 
-    return token
-      ? {
-          accessToken: token,
-          email: email || undefined,
-          id: id ? Number(id) : undefined,
-        }
-      : {};
+    if (!token) return {};
+
+    try {
+      const decoded = jwtDecode<JwtPayload>(token);
+      return {
+        accessToken: token,
+        email: decoded.email,
+        id: decoded.id,
+      };
+    } catch {
+      return {};
+    }
   });
 
   const logout = () => {
     setAuth({});
     localStorage.removeItem("token");
-    localStorage.removeItem("email");
-    localStorage.removeItem("id");
   };
 
   useEffect(() => {
     if (auth.accessToken) {
       localStorage.setItem("token", auth.accessToken);
-    } else {
-      localStorage.removeItem("token");
     }
-
-    if (auth.email) {
-      localStorage.setItem("email", auth.email);
-    } else {
-      localStorage.removeItem("email");
-    }
-
-    if (auth.id !== undefined) {
-      localStorage.setItem("id", String(auth.id));
-    } else {
-      localStorage.removeItem("id");
-    }
-  }, [auth]);
+  }, [auth.accessToken]);
 
   useEffect(() => {
     const token = auth.accessToken;
@@ -70,7 +63,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       console.log("Token expired");
       logout();
     }
-  }, [auth]);
+  }, [auth.accessToken]);
 
   return (
     <AuthContext.Provider value={{ auth, setAuth, logout }}>

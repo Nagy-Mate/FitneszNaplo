@@ -8,13 +8,14 @@ import type { AxiosError } from "axios";
 import { toast } from "react-toastify";
 
 function CreateWorkoutPage() {
-  const { auth } = useAuth();
+  const { auth,logout } = useAuth();
   const navigate = useNavigate();
 
   const [eName, setEName] = useState<string>("");
 
   useEffect(() => {
     if (!auth.accessToken || isTokenExpired(auth.accessToken)) {
+      logout()
       navigate("/login");
     }
   }, []);
