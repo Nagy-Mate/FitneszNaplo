@@ -1,29 +1,18 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import "../styles/LoginRegister.css";
 import { Link, useNavigate } from "react-router";
 import apiClient from "../api/apiClient.tsx";
 import type { AxiosError } from "axios";
 import { useAuth } from "../context/AuthProvider.tsx";
 import icon from "../assets/fitIcon.png";
+import { toast } from "react-toastify";
 
 function LoginPage() {
   const { setAuth } = useAuth();
   const navigate = useNavigate();
 
-  const userRef = useRef<HTMLInputElement>(null);
-  const errRef = useRef<HTMLInputElement>(null);
-
   const [email, setEmail] = useState<string>("");
   const [pwd, setPwd] = useState<string>("");
-  const [errMsg, setErrMsg] = useState<string>("");
-
-  useEffect(() => {
-    userRef.current?.focus();
-  }, []);
-
-  useEffect(() => {
-    setErrMsg("");
-  }, [email, pwd]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,7 +25,7 @@ function LoginPage() {
 
       if (response.status == 200) {
         setAuth({
-          accessToken: response.data.token
+          accessToken: response.data.token,
         });
 
         navigate("/home");
@@ -46,29 +35,25 @@ function LoginPage() {
       setPwd("");
     } catch (err) {
       const error = err as AxiosError;
-      setEmail("")
-      setPwd("")
-      if (!error.response) {
-        setErrMsg("No Server Response");
-      } else if (error.response?.status === 401) {
-        setErrMsg("Unauthorized");
+      setEmail("");
+      setPwd("");
+      if (!error.response && !toast.isActive("loginErr")) {
+        toast.error("No Server Response", { toastId: "loginErr" });
+      } else if (
+        error.response?.status === 401 &&
+        !toast.isActive("loginErr")
+      ) {
+        toast.error("Unauthorized", { toastId: "loginErr" });
       } else {
-        setErrMsg("Login Failed");
+        if (!toast.isActive("loginErr")) {
+          toast.error("Unauthorized", { toastId: "loginErr" });
+        }
       }
-      errRef.current?.focus();
     }
   };
   return (
     <div className="login-container">
       <section className="login-card">
-        <p
-          ref={errRef}
-          className={errMsg ? "errmsg" : "offscreen"}
-          aria-live="assertive"
-        >
-          {errMsg}{" "}
-        </p>
-
         <img alt="App logo" src={icon} className="logo" />
         <h1 className="title">Fit Notes</h1>
         <p className="subtitle">Lépj be!</p>
@@ -76,7 +61,6 @@ function LoginPage() {
         <form className="form" onSubmit={handleSubmit}>
           <input
             type="text"
-            ref={userRef}
             placeholder="Email"
             required
             onChange={(e) => setEmail(e.target.value)}

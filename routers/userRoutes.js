@@ -65,7 +65,7 @@ router.post("/register", async (req, res) => {
   }
   let user = User.getUsersByEmail(email);
   if (user) {
-    return res.status(400).send("Email already exists");
+    return res.status(409).send("Email already exists");
   }
 
   const salt = await bcrypt.genSalt(12);

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import "../styles/LoginRegister.css";
 import { Link, useNavigate } from "react-router";
 import apiClient from "../api/apiClient.tsx";
@@ -8,14 +8,12 @@ import { faTimes } from "@fortawesome/free-solid-svg-icons/faTimes";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faInfoCircle } from "@fortawesome/free-solid-svg-icons/faInfoCircle";
 import icon from "../assets/fitIcon.png";
+import { toast } from "react-toastify";
 
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 const RegisterPage = () => {
-  const userRef = useRef<HTMLInputElement>(null);
-  const errRef = useRef<HTMLInputElement>(null);
-
   const [email, setEmail] = useState<string>("");
   const [validEmail, setValidEmail] = useState<boolean>(false);
   const [emailFocus, setEmailFocus] = useState<boolean>(false);
@@ -28,12 +26,7 @@ const RegisterPage = () => {
   const [validMatch, setValidMatch] = useState<boolean>(false);
   const [matchFocus, setMatchFocus] = useState<boolean>(false);
 
-  const [errMsg, setErrMsg] = useState<string>("");
   const [success, setSuccess] = useState<boolean>(false);
-
-  useEffect(() => {
-    userRef.current?.focus();
-  }, []);
 
   useEffect(() => {
     setValidEmail(EMAIL_REGEX.test(email));
@@ -45,40 +38,47 @@ const RegisterPage = () => {
     setValidMatch(match);
   }, [pwd, matchPwd]);
 
-  useEffect(() => {
-    setErrMsg("");
-  }, [email, pwd, matchPwd]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const password = pwd.trim();
-    const email2 = email.trim()
+    const email2 = email.trim();
     const v2 = EMAIL_REGEX.test(email2);
     const v3 = PWD_REGEX.test(password);
-    if (!v2 || !v3) {
-      setErrMsg("Invalid Entry");
+    if ((!v2 || !v3) && !toast.isActive("inputErr")) {
+      toast.error("Invalid input", { toastId: "inputErr" });
       return;
     }
     try {
-      await apiClient.post(
-        "/users/register",
-        JSON.stringify({ password, email })
-      );
-      setSuccess(true);
+      await apiClient
+        .post("/users/register", JSON.stringify({ password, email }))
+        .then((res) => {
+          if (res.status === 201) {
+            setSuccess(true);
 
-      setEmail("");
-      setPwd("");
-      setMatchPwd("");
+            setEmail("");
+            setPwd("");
+            setMatchPwd("");
+          }
+        });
     } catch (err) {
       const error = err as AxiosError;
-      if (!error.response) {
-        setErrMsg("No Server Response");
-      } else if (error.response?.status === 409) {
-        setErrMsg("User Already Exists");
+      if (!error.response && !toast.isActive("registerErr")) {
+        toast.error("No Server Response", { toastId: "registerErr" });
+      } else if (
+        error.response?.status === 409 &&
+        !toast.isActive("registerErr")
+      ) {
+        toast.error("User Already Exists", { toastId: "registerErr" });
+      } else if (
+        error.response?.status === 400 &&
+        !toast.isActive("registerErr")
+      ) {
+        toast.error("Invalid input", { toastId: "registerErr" });
       } else {
-        setErrMsg("Registration Failed");
+        if (!toast.isActive("registerErr")) {
+          toast.error("Registration Failed", { toastId: "registerErr" });
+        }
       }
-      errRef.current?.focus();
     }
   };
 
@@ -120,14 +120,6 @@ const RegisterPage = () => {
       ) : (
         <div className="login-container">
           <section className="login-card">
-            <p
-              ref={errRef}
-              className={errMsg ? "errmsg" : "offscreen"}
-              aria-live="assertive"
-            >
-              {errMsg}{" "}
-            </p>
-
             <img alt="App logo" src={icon} className="logo" />
 
             <h1 className="title">Register</h1>
@@ -246,7 +238,7 @@ const RegisterPage = () => {
                 Must match the first password input field.
               </p>
 
-              <button 
+              <button
                 disabled={
                   !validPwd || !validEmail || !validMatch ? true : false
                 }
