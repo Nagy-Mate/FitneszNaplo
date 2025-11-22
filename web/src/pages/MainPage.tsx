@@ -57,7 +57,7 @@ function MainPage() {
     <>
       <nav className="navbar bg-body-white fixed-top">
         <div className="container-fluid">
-          <a className="navbar-brand" href=""></a>
+          <a></a>
           <button
             className="navbar-toggler"
             type="button"
@@ -87,17 +87,8 @@ function MainPage() {
             <div className="offcanvas-body">
               <ul className="navbar-nav justify-content-end flex-grow-1 pe-3">
                 <li className="nav-item">
-                  <Link
-                    className="nav-link active"
-                    aria-current="page"
-                    to={"/home"}
-                  >
-                    Home
-                  </Link>
-                </li>
-                <li className="nav-item">
                   <Link className="nav-link" to={"/create"}>
-                    Create workout
+                    Create workout & exercise
                   </Link>
                 </li>
                 <li className="nav-item">
@@ -106,31 +97,16 @@ function MainPage() {
                   </Link>
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link" to={"/workoutE"}>
-                    Add exercise to workout
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <a className="nav-link" onClick={logoutBtn}>
+                  <a className="nav-link logout-link" onClick={logoutBtn}>
                     Log out
                   </a>
                 </li>
               </ul>
-              <form className="d-flex mt-3" role="search">
-                <input
-                  className="form-control me-2"
-                  type="search"
-                  placeholder="Search"
-                  aria-label="Search"
-                />
-                <button className="btn btn-outline-success" type="submit">
-                  Search
-                </button>
-              </form>
             </div>
           </div>
         </div>
       </nav>
+
       <div className="workout-container">
         <h2 className="workout-title">My Workouts</h2>
 

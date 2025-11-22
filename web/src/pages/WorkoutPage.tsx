@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import type { Workout } from "../types/Workout";
 import apiClient from "../api/apiClient";
 import { useAuth } from "../context/AuthProvider";
@@ -24,7 +24,18 @@ function WorkoutPage() {
   const [reps, setReps] = useState<string>("");
   const [weight, setWeight] = useState<string>("");
 
-  const [showPopup, setShowPopup] = useState<boolean>(false);
+  const [date, setDate] = useState<string>();
+  const [duration, setDuration] = useState<number>();
+  const [notes, seteNotes] = useState<string>();
+
+  const [showPopupDW, setShowPopupDW] = useState<boolean>(false);
+  const [showPopupDE, setShowPopupDE] = useState<boolean>(false);
+
+  const [deleteEId, setDeleteEId] = useState<number>();
+
+  const [workouts, setWorkouts] = useState<Array<Workout>>();
+
+  const [saved, setSaved] = useState(true);
 
   useEffect(() => {
     if (auth.accessToken && isTokenExpired(auth.accessToken)) {
@@ -80,6 +91,38 @@ function WorkoutPage() {
       }
     })();
   }, [workout]);
+
+  useEffect(() => {
+    if (!saved) return;
+    (async () => {
+      try {
+        const res = await apiClient.get("/workouts", {
+          headers: {
+            Authorization: `Beare ${auth.accessToken}`,
+          },
+        });
+
+        if (res.status === 200) {
+          setWorkouts(res.data);
+        }
+      } catch (err) {
+        const error = err as AxiosError;
+
+        if (error.status === 404) {
+          if (!toast.isActive("loginErr")) {
+            toast.info("Workouts not found", { toastId: "loginErr" });
+          }
+        } else if (error.status === 401) {
+          navigate("/");
+        } else if (error.status === 403) {
+          navigate("/");
+        } else {
+          navigate("/");
+        }
+      }
+    })();
+     setSaved(false);
+  }, []);
 
   if (!workout || !exercises || !workoutE) return <p>Loading...</p>;
 
@@ -142,14 +185,155 @@ function WorkoutPage() {
           navigate("/home");
         }
       })
-      .catch((e) => {
+      .catch(() => {
         if (!toast.isActive("deleted")) {
           toast.error("Delete failed", { toastId: "deleted" });
         }
       });
   };
+
+  const deleteWE = async () => {
+    if (deleteEId) {
+      await apiClient
+        .delete(`/workoutExercises/${deleteEId}`, {
+          headers: { Authorization: `Bearer ${auth.accessToken}` },
+        })
+        .then((res) => {
+          if (res.status === 204) {
+            setDeleteEId(undefined);
+            window.location.reload();
+          }
+        })
+        .catch((e) => {
+          const error = e as AxiosError;
+          setDeleteEId(undefined);
+
+          if (error.status === 404 && !toast.isActive("dleErr")) {
+            toast.error("Not found", { toastId: "delErr" });
+          } else if (error.status === 401 && !toast.isActive("dleErr")) {
+            toast.error("Unauthorized", { toastId: "delErr" });
+          } else {
+            if (!toast.isActive("dleErr")) {
+              toast.error("Delete failed", { toastId: "delErr" });
+            }
+          }
+        });
+    } else {
+      if (!toast.isActive("id")) {
+        toast.error("Invalid id", { toastId: "id" });
+      }
+    }
+  };
+  const updateW = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const payload: Record<string, unknown> = {};
+
+    if (date) payload.date = date;
+    if (duration) payload.duration = Number(duration);
+    if (notes) payload.notes = notes;
+
+    if (Object.keys(payload).length === 0) {
+      if (!toast.isActive("updateErr")) {
+        toast.error("Enter at least one data to update", {
+          toastId: "updateErr",
+        });
+      }
+      return;
+    }
+
+    try {
+      await apiClient.patch(`/workouts/${workout.id}`, payload, {
+        headers: { Authorization: `Bearer ${auth.accessToken}` },
+      });
+
+      toast.success("Workout updated");
+      window.location.reload();
+    } catch {
+      toast.error("Update failed");
+    }
+  };
+
+  const logoutBtn = () => {
+    logout();
+    navigate("/");
+  };
   return (
     <>
+      <nav className="navbar bg-body-white fixed-top">
+        <div className="container-fluid">
+          <Link className="navbar-brand" to={"/home"}>
+            Home
+          </Link>
+          <button
+            className="navbar-toggler"
+            type="button"
+            data-bs-toggle="offcanvas"
+            data-bs-target="#offcanvasNavbar"
+            aria-controls="offcanvasNavbar"
+            aria-label="Toggle navigation"
+          >
+            <span className="navbar-toggler-icon"></span>
+          </button>
+          <div
+            className="offcanvas offcanvas-end"
+            id="offcanvasNavbar"
+            aria-labelledby="offcanvasNavbarLabel"
+          >
+            <div className="offcanvas-header">
+              <h5 className="offcanvas-title" id="offcanvasNavbarLabel">
+                Workout
+              </h5>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="offcanvas"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div className="offcanvas-body">
+              <ul className="navbar-nav justify-content-end flex-grow-1 pe-3">
+                <li className="nav-item">
+                  <Link className="nav-link" to={"/create"}>
+                    Create workout & exercise
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to={"/profile"}>
+                    Profile Page
+                  </Link>
+                </li>
+                <li className="nav-item dropdown">
+                  <a
+                    className="nav-link dropdown-toggle"
+                    href="#"
+                    role="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    Workouts
+                  </a>
+                  <ul className="dropdown-menu">
+                    {workouts?.map((w) => (
+                      <li>
+                        <Link className="dropdown-item" to={`/workout/${w.id}`}>
+                          {new Date(w.date).toDateString()} - {w.notes}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </li>
+                <li className="nav-item">
+                  <a className="nav-link logout-link" onClick={logoutBtn}>
+                    Log out
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </nav>
+
       <div className="add-exercise-container">
         <h3>Add exercise to workout</h3>
 
@@ -233,22 +417,70 @@ function WorkoutPage() {
                 <p>
                   <strong>Weight:</strong> {ex.weight} kg
                 </p>
+
+                <button
+                  className="btn btn-danger"
+                  onClick={() => {
+                    setShowPopupDE(true);
+                    setDeleteEId(ex.id);
+                  }}
+                >
+                  Delete
+                </button>
               </div>
             ))}
           </div>
         </div>
       </div>
+
+      <div className="update-card">
+        <h2 className="workout-title">Update this workout</h2>
+
+        <form onSubmit={updateW} className="form-update">
+          <label className="label">Date</label>
+          <input
+            type="date"
+            onChange={(e) =>
+              setDate(new Date(e.target.value).toISOString().split("T")[0])
+            }
+            value={date}
+            className="input-update"
+          />
+
+          <label className="label">Duration (seconds)</label>
+          <input
+            type="number"
+            min={1}
+            max={360}
+            onChange={(e) => setDuration(Number(e.target.value))}
+            value={duration}
+            className="input-update"
+          />
+
+          <label className="label">Notes</label>
+          <input
+            type="text"
+            onChange={(e) => seteNotes(e.target.value)}
+            value={notes}
+            className="input-update"
+            placeholder="Notes..."
+          />
+
+          <button className="btn btn-primary save-btn">Save Workout</button>
+        </form>
+      </div>
+
       <div>
         <button
           className="delete-workout-btn"
-          onClick={() => setShowPopup(true)}
+          onClick={() => setShowPopupDW(true)}
         >
           Delete Workout
         </button>
       </div>
 
-      <div className={`popup-overlay ${showPopup ? "show" : ""}`}>
-        <div className={`custom-confirm ${showPopup ? "show" : ""}`}>
+      <div className={`popup-overlay ${showPopupDW ? "show" : ""}`}>
+        <div className={`custom-confirm ${showPopupDW ? "show" : ""}`}>
           <h3>Delete Workout</h3>
           <p>Are you sure you want to delete this workout?</p>
 
@@ -259,7 +491,27 @@ function WorkoutPage() {
 
             <button
               className="btn btn-secondary"
-              onClick={() => setShowPopup(false)}
+              onClick={() => setShowPopupDW(false)}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className={`popup-overlay ${showPopupDE ? "show" : ""}`}>
+        <div className={`custom-confirm ${showPopupDE ? "show" : ""}`}>
+          <h3>Delete exercise form this workout</h3>
+          <p>Are you sure you want to delete this?</p>
+
+          <div className="confirm-buttons">
+            <button className="btn btn-danger" onClick={deleteWE}>
+              Delete
+            </button>
+
+            <button
+              className="btn btn-secondary"
+              onClick={() => setShowPopupDE(false)}
             >
               Cancel
             </button>

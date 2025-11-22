@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useAuth } from "../context/AuthProvider";
 import { isTokenExpired } from "../utils/tokenCheck";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import apiClient from "../api/apiClient";
 import type { AxiosError } from "axios";
 import { toast } from "react-toastify";
@@ -12,6 +12,7 @@ import {
   faTimes,
 } from "@fortawesome/free-solid-svg-icons";
 import "../styles/Profile.css";
+import type { Workout } from "../types/Workout";
 
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -37,10 +38,40 @@ function ProfilePage() {
   const [pwdConfirm, setPwdConfirm] = useState<string>("");
   const [showPopup, setShowPopup] = useState<boolean>(false);
 
+  const [workouts, setWorkouts] = useState<Array<Workout>>();
+
   useEffect(() => {
     if (auth.accessToken && isTokenExpired(auth.accessToken)) {
       logout();
       navigate("/");
+    }else{
+      (async () => {
+      try {
+        const res = await apiClient.get("/workouts", {
+          headers: {
+            Authorization: `Beare ${auth.accessToken}`,
+          },
+        });
+
+        if (res.status === 200) {
+          setWorkouts(res.data);
+        }
+      } catch (err) {
+        const error = err as AxiosError;
+
+        if (error.status === 404) {
+          if (!toast.isActive("loginErr")) {
+            toast.info("Workouts not found", { toastId: "loginErr" });
+          }
+        } else if (error.status === 401) {
+          navigate("/");
+        } else if (error.status === 403) {
+          navigate("/");
+        } else {
+          navigate("/");
+        }
+      }
+    })();
     }
   }, [auth.accessToken]);
 
@@ -159,8 +190,86 @@ function ProfilePage() {
     })();
   };
 
+  const logoutBtn = () => {
+    logout();
+    navigate("/");
+  };
   return (
     <>
+      <nav className="navbar bg-body-white fixed-top">
+        <div className="container-fluid">
+          <Link className="navbar-brand" to={"/home"}>
+            Home
+          </Link>
+          <button
+            className="navbar-toggler"
+            type="button"
+            data-bs-toggle="offcanvas"
+            data-bs-target="#offcanvasNavbar"
+            aria-controls="offcanvasNavbar"
+            aria-label="Toggle navigation"
+          >
+            <span className="navbar-toggler-icon"></span>
+          </button>
+          <div
+            className="offcanvas offcanvas-end"
+            id="offcanvasNavbar"
+            aria-labelledby="offcanvasNavbarLabel"
+          >
+            <div className="offcanvas-header">
+              <h5 className="offcanvas-title" id="offcanvasNavbarLabel">
+                Profile
+              </h5>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="offcanvas"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div className="offcanvas-body">
+              <ul className="navbar-nav justify-content-end flex-grow-1 pe-3">
+                <li className="nav-item">
+                  <Link className="nav-link" to={"/create"}>
+                    Create workout & exercise
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to={"/profile"}>
+                    Profile Page
+                  </Link>
+                </li>
+                <li className="nav-item dropdown">
+                  <a
+                    className="nav-link dropdown-toggle"
+                    href="#"
+                    role="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    Workouts
+                  </a>
+                  <ul className="dropdown-menu">
+                    {workouts?.map((w) => (
+                      <li>
+                        <Link className="dropdown-item" to={`/workout/${w.id}`}>
+                          {new Date(w.date).toDateString()} - {w.notes}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </li>
+                <li className="nav-item">
+                  <a className="nav-link logout-link" onClick={logoutBtn}>
+                    Log out
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </nav>
+
       <div className="profile-container">
         <h1 className="profile-title">Profile</h1>
 
