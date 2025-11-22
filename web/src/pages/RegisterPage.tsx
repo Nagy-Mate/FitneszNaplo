@@ -92,7 +92,7 @@ const RegisterPage = () => {
       }, 1000);
 
       if (countdown === 0) {
-        navigate("/login");
+        navigate("/");
       }
 
       return () => clearInterval(timer);
@@ -101,7 +101,7 @@ const RegisterPage = () => {
       <p>
         Redirect to{" "}
         <span className="s-text">
-          <Link to={"/login"}>Login</Link>
+          <Link to={"/"}>Login</Link>
         </span>{" "}
         in {countdown} s
       </p>
@@ -248,7 +248,7 @@ const RegisterPage = () => {
             </form>
             <p className="s-text">
               Already registered?
-              <Link to={"/login"}> Sign in </Link>
+              <Link to={"/"}> Sign in </Link>
             </p>
           </section>
         </div>

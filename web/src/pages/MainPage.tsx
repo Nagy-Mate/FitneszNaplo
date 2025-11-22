@@ -15,9 +15,9 @@ function MainPage() {
   const [workouts, setWorkouts] = useState<Array<Workout>>();
 
   useEffect(() => {
-    if (!auth.accessToken || isTokenExpired(auth.accessToken)) {
+    if (auth.accessToken && isTokenExpired(auth.accessToken)) {
       logout();
-      navigate("/login");
+      navigate("/");
     } else {
       (async () => {
         try {
@@ -38,28 +38,26 @@ function MainPage() {
               toast.info("Workouts not found", { toastId: "loginErr" });
             }
           } else if (error.status === 401) {
-            navigate("/login");
+            navigate("/");
           } else if (error.status === 403) {
-            navigate("/login");
+            navigate("/");
           } else {
-            navigate("/login");
+            navigate("/");
           }
         }
       })();
     }
-  }, []);
+  }, [auth.accessToken]);
 
-  const logoutBtn = ()=>{
+  const logoutBtn = () => {
     logout();
-    navigate("/login")
-  }
+    navigate("/");
+  };
   return (
     <>
-      <nav className="navbar bg-body-tertiary fixed-top">
+      <nav className="navbar bg-body-white fixed-top">
         <div className="container-fluid">
-          <a className="navbar-brand" href="#">
-            Navbar...
-          </a>
+          <a className="navbar-brand" href=""></a>
           <button
             className="navbar-toggler"
             type="button"
@@ -105,6 +103,11 @@ function MainPage() {
                 <li className="nav-item">
                   <Link className="nav-link" to={"/profile"}>
                     Profile Page
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to={"/workoutE"}>
+                    Add exercise to workout
                   </Link>
                 </li>
                 <li className="nav-item">

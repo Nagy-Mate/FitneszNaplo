@@ -1,3 +1,58 @@
-.input-groupE{
-    width: 800px;
+.createE-group,
+.createW-group {
+  max-width: 500px;
+  margin: 40px auto;
+  background: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+  text-align: center;
+}
+
+.label {
+  display: block;
+  text-align: left;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #444;
+  font-size: 15px;
+}
+
+.eInput,
+.input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  border: 1px solid #cfcfcf;
+  font-size: 15px;
+  transition: 0.2s;
+}
+
+.eInput:focus,
+.input:focus {
+  border-color: #5ea0ff;
+  box-shadow: 0 0 5px rgba(94, 160, 255, 0.5);
+  outline: none;
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  background: #5ea0ff;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.btn-primary:hover {
+  background: #428df5;
+}
+
+.save-btn {
+  margin-top: 10px;
 }

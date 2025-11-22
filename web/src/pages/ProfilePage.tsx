@@ -11,13 +11,13 @@ import {
   faInfoCircle,
   faTimes,
 } from "@fortawesome/free-solid-svg-icons";
-import { confirmAlert } from "react-confirm-alert";
+import "../styles/Profile.css";
 
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 function ProfilePage() {
-  const { auth, logout } = useAuth();
+  const { auth, logout, setAuth } = useAuth();
   const navigate = useNavigate();
 
   const errRef = useRef<HTMLInputElement>(null);
@@ -34,12 +34,15 @@ function ProfilePage() {
   const [validEmail, setValidEmail] = useState<boolean>(false);
   const [emailFocus, setEmailFocus] = useState<boolean>(false);
 
+  const [pwdConfirm, setPwdConfirm] = useState<string>("");
+  const [showPopup, setShowPopup] = useState<boolean>(false);
+
   useEffect(() => {
-    if (!auth.accessToken || isTokenExpired(auth.accessToken)) {
+    if (auth.accessToken && isTokenExpired(auth.accessToken)) {
       logout();
-      navigate("/login");
+      navigate("/");
     }
-  }, []);
+  }, [auth.accessToken]);
 
   useEffect(() => {
     setValidPwd(PWD_REGEX.test(pwd));
@@ -107,6 +110,7 @@ function ProfilePage() {
         })
         .then((res) => {
           if (res.status === 200 && !toast.isActive("emailSaved")) {
+            setAuth({ email: email2 });
             setEmail("");
             toast.success("Email saved", { toastId: "emailSaved" });
           }
@@ -127,64 +131,48 @@ function ProfilePage() {
     }
   };
 
-  const deleteUser = async () => {
-    confirmAlert({
-      title: "Are you sure to delete this user.",
-      message: "Confirm to submit",
+  const deleteUser = (e: React.FormEvent) => {
+    e.preventDefault();
+    (async () => {
+      if (pwdConfirm.trim() === "") {
+        if (!toast.isActive("pwdErr"))
+          toast.error("Password required", { toastId: "pwdErr" });
+        return;
+      }
 
-      buttons: [
-        {
-          label: "Yes",
-          onClick: async () => {
-            console.log(auth.accessToken, "\n", auth.id, auth.email);
-            await apiClient
-              .delete(`/users/${auth.id}`, {
-                headers: { Authorization: `Bearer ${auth.accessToken}` },
-              })
-              .then((res) => {
-                if (res.status === 204 && !toast.isActive("delUser")) {
-                  toast.success("User deleted", { toastId: "delUser" });
-                  logout();
-                  navigate("/login");
-                }
-              })
-              .catch((e) => {
-                const error = e as AxiosError;
-                if (error.status === 401 && !toast.isActive("delUserErr")) {
-                  toast.error("Unauthorized", { toastId: "delUserErr" });
-                } else if (
-                  error.status === 403 &&
-                  !toast.isActive("delUserErr")
-                ) {
-                  toast.error("Unauthorized", { toastId: "delUserErr" });
-                } else {
-                  if (!toast.isActive("delUserErr")) {
-                    toast.error("User delete Failed", {
-                      toastId: "delUserErr",
-                    });
-                  }
-                }
-              });
-          },
-        },
-        {
-          label: "No",
-        },
-      ],
-    });
+      try {
+        await apiClient.delete(`/users/${auth.id}`, {
+          data: { password: pwdConfirm },
+          headers: { Authorization: `Bearer ${auth.accessToken}` },
+        });
+
+        toast.success("User deleted");
+        setPwdConfirm("");
+        logout();
+        navigate("/");
+      } catch {
+        if (!toast.isActive("pwdErr")) {
+          toast.error("Invalid password", { toastId: "pwdErr" });
+          setPwdConfirm("");
+        }
+      }
+    })();
   };
+
   return (
     <>
-      <div>User email: {auth?.email}</div>
+      <div className="profile-container">
+        <h1 className="profile-title">Profile</h1>
 
-      <form onSubmit={changePwd}>
-        <p>Change Password: </p>
-        <div className="input-groupE">
+        <div className="profile-email">User email: {auth?.email}</div>
+
+        <form onSubmit={changePwd} className="pForm">
+          <p>Change Password: </p>
+
           <div>
-            <label htmlFor="eInput"></label>
             <input
               type="password"
-              className="eInput"
+              className="pwdInput"
               placeholder="Password"
               id="pwd"
               autoComplete="off"
@@ -228,7 +216,7 @@ function ProfilePage() {
           <div>
             <input
               type="password"
-              className="eInput"
+              className="pwdInput"
               placeholder="Password again"
               autoComplete="off"
               id="confirmPwd"
@@ -260,60 +248,90 @@ function ProfilePage() {
           </p>
 
           <button
-            className="btn btn-primary"
+            className="btn btn-primary saveBtn"
             disabled={!validPwd || !validMatch ? true : false}
           >
             Save password
           </button>
-        </div>
-      </form>
-      <form onSubmit={changeEmail}>
-        <div className="input-group">
-          <input
-            type="email"
-            placeholder="Email"
-            id="email"
-            autoComplete="off"
-            onChange={(e) => setEmail(e.target.value)}
-            value={email}
-            required
-            aria-invalid={validEmail ? "false" : "true"}
-            aria-describedby="uidnote"
-            onFocus={() => setEmailFocus(true)}
-            onBlur={() => setEmailFocus(false)}
-          />
-          <FontAwesomeIcon
-            icon={validEmail ? faCheck : faTimes}
-            className={
-              !email
-                ? "hide"
-                : validEmail
-                ? "valid input-icon"
-                : "invalid input-icon"
-            }
-          />
-        </div>
-        <p
-          id="uidnote"
-          className={
-            emailFocus && email && !validEmail ? "instructions" : "offscreen"
-          }
-        >
-          <FontAwesomeIcon icon={faInfoCircle} />
-          Please enter a valid email address. <br />
-          Example: user@example.com
-        </p>
-        <button
-          className="btn btn-primary"
-          disabled={!validEmail ? true : false}
-        >
-          Save email
-        </button>
-      </form>
+        </form>
 
-      <button className="btn btn-danger" onClick={deleteUser}>
-        Delte User
-      </button>
+        <form onSubmit={changeEmail} className="pForm">
+          <p>Change email: </p>
+          <div>
+            <input
+              className="pwdInput"
+              type="email"
+              placeholder="Email"
+              id="email"
+              autoComplete="off"
+              onChange={(e) => setEmail(e.target.value)}
+              value={email}
+              required
+              aria-invalid={validEmail ? "false" : "true"}
+              aria-describedby="uidnote"
+              onFocus={() => setEmailFocus(true)}
+              onBlur={() => setEmailFocus(false)}
+            />
+            <FontAwesomeIcon
+              icon={validEmail ? faCheck : faTimes}
+              className={
+                !email
+                  ? "hide"
+                  : validEmail
+                  ? "valid input-icon"
+                  : "invalid input-icon"
+              }
+            />
+          </div>
+          <p
+            id="uidnote"
+            className={
+              emailFocus && email && !validEmail ? "instructions" : "offscreen"
+            }
+          >
+            <FontAwesomeIcon icon={faInfoCircle} />
+            Please enter a valid email address. <br />
+            Example: user@example.com
+          </p>
+          <button
+            className="btn btn-primary saveBtn"
+            disabled={!validEmail ? true : false}
+          >
+            Save email
+          </button>
+        </form>
+
+        <button className="btn btn-danger" onClick={() => setShowPopup(true)}>
+          Delte User
+        </button>
+
+        <div className={`popup-overlay ${showPopup ? "show" : ""}`}>
+          <div className={`custom-confirm ${showPopup ? "show" : ""}`}>
+            <h3>Delete Account</h3>
+            <p>Please enter your password to confirm deletion</p>
+
+            <input
+              type="password"
+              placeholder="Password"
+              onChange={(e) => setPwdConfirm(e.target.value)}
+              className="custom-input"
+            />
+
+            <div className="confirm-buttons">
+              <button className="btn btn-danger" onClick={deleteUser}>
+                Delete
+              </button>
+
+              <button
+                className="btn btn-secondary"
+                onClick={() => setShowPopup(false)}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </>
   );
 }

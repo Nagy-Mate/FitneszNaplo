@@ -82,6 +82,10 @@ router.post("/register", async (req, res) => {
 
 router.delete("/:id", auth, (req, res) => {
   const id = req.params.id;
+  const {password} = req.body;
+  if(!password){
+    return res.status(400).send("Password required")
+  }
   if (req.userId != id) {
     return res.status(401).send("Unauthorized");
   }
@@ -89,7 +93,9 @@ router.delete("/:id", auth, (req, res) => {
   if (!user) {
     return res.status(404).send("User not found!");
   }
-
+  if (!bcrypt.compareSync(password, user.password)) {
+    return res.status(401).send("Unauthorized");
+  } 
   const deletedUser = User.deleteUser(id);
   if (deletedUser.changes != 1) {
     return res.status(500).send("User delete failed! ");

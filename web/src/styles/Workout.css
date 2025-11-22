@@ -41,6 +41,174 @@
   color: #333;
   font-weight: 600;
 }
-.btn-primary{
-    margin: 10px;
+.backBtn {
+  margin: 10px;
+}
+/* =======================
+   ADD EXERCISE FORM BOX
+   ======================= */
+/* ===== Add Exercise Compact Row ===== */
+
+.add-exercise-container {
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.add-exercise-container h3 {
+  text-align: center;
+  margin-bottom: 18px;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+/* Dropdown */
+.add-exercise-container select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 18px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 15px;
+}
+
+/* Horizontális mezők (sets / reps / weight) */
+.compact-row {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 15px;
+}
+
+.compact-input {
+  width: 80px; 
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.compact-input:focus {
+  outline: none;
+  border-color: #5ea0ff;
+  box-shadow: 0 0 4px rgba(94, 160, 255, 0.5);
+}
+
+/* Button */
+.add-exercise-container button {
+  width: 100%;
+  padding: 12px;
+  background: #5ea0ff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+.add-exercise-container button:hover {
+  background: #428df5;
+}
+/* ==== POPUP OVERLAY ==== */
+.popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.popup-overlay.show {
+  display: flex;
+}
+
+/* ==== POPUP WINDOW ==== */
+.custom-confirm {
+  background: #fff;
+  padding: 25px;
+  width: 350px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  display: none;
+}
+
+.custom-confirm.show {
+  display: block;
+}
+
+.custom-confirm h3 {
+  margin-bottom: 15px;
+  font-size: 20px;
+}
+
+.custom-confirm p {
+  font-size: 14px;
+  margin-bottom: 15px;
+  color: #555;
+}
+
+/* Buttons inside popup */
+.confirm-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.confirm-buttons .btn {
+  flex: 1;
+  border-radius: 8px !important;
+}
+
+/* Delete & cancel styling */
+.btn-danger {
+  background: #d93a3a !important;
+  color: white;
+}
+
+.btn-danger:hover {
+  background: #c62828 !important;
+}
+
+.btn-secondary {
+  background: #bdbdbd;
+  color: #000;
+}
+
+.btn-secondary:hover {
+  background: #9e9e9e;
+}
+.delete-workout-btn {
+  background: #d93a3a;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.25s ease;
+  width: 200px;
+  margin: 20px auto;
+  display: block;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.18);
+}
+
+.delete-workout-btn:hover {
+  background: #c62828;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+}
+
+.delete-workout-btn:active {
+  transform: scale(0.97);
 }

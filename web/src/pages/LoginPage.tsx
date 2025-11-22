@@ -6,6 +6,8 @@ import type { AxiosError } from "axios";
 import { useAuth } from "../context/AuthProvider.tsx";
 import icon from "../assets/fitIcon.png";
 import { toast } from "react-toastify";
+import type { JwtPayload } from "../types/JwtPayload.ts";
+import { jwtDecode } from "jwt-decode";
 
 function LoginPage() {
   const { setAuth } = useAuth();
@@ -24,8 +26,11 @@ function LoginPage() {
       );
 
       if (response.status == 200) {
+        const decoded = jwtDecode<JwtPayload>(response.data.token);
         setAuth({
           accessToken: response.data.token,
+          email: decoded.email,
+          id: decoded.id,
         });
 
         navigate("/home");
