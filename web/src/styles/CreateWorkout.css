@@ -56,3 +56,58 @@
 .save-btn {
   margin-top: 10px;
 }
+.delete-exercise-container {
+  max-width: 400px;
+  margin: 30px auto;
+  background: #fafafa;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.delete-exercise-container h2 {
+  margin-bottom: 15px;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.delete-select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  margin-bottom: 15px;
+  font-size: 15px;
+  background: white;
+  transition: 0.2s;
+}
+
+.delete-select:focus {
+  outline: none;
+  border-color: #5ea0ff;
+  box-shadow: 0 0 5px rgba(94,160,255,0.5);
+}
+
+.delete-exercise-btn {
+  background: #d93a3a;
+  color: white;
+  border: none;
+  padding: 12px;
+  width: 100%;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+.delete-exercise-btn:hover {
+  background: #c62828;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+}
+
+.delete-exercise-btn:active {
+  transform: scale(0.97);
+}

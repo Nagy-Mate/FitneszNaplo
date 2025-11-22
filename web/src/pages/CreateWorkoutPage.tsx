@@ -1,11 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthProvider";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../styles/CreateWorkout.css";
 import { isTokenExpired } from "../utils/tokenCheck";
 import apiClient from "../api/apiClient";
 import type { AxiosError } from "axios";
 import { toast } from "react-toastify";
+import type { Exercise } from "../types/Exercise";
 
 function CreateWorkoutPage() {
   const { auth, logout } = useAuth();
@@ -19,16 +20,30 @@ function CreateWorkoutPage() {
   const [duration, setDuration] = useState<number>(1);
   const [notes, seteNotes] = useState<string>("");
 
+  const [exercises, setExercises] = useState<Array<Exercise>>();
+  const [exerciseDeleteId, setExerciseDeleteId] = useState<number>();
+
   useEffect(() => {
     if (auth.accessToken && isTokenExpired(auth.accessToken)) {
       logout();
       navigate("/");
+    } else {
+      (async () => {
+        await apiClient
+          .get("/exercises")
+          .then((res) => {
+            if (res.status == 200) {
+              setExercises(res.data);
+            }
+          })
+          .catch((e) => {});
+      })();
     }
   }, [auth.accessToken]);
 
   const saveE = async (e: React.FormEvent) => {
-    e.preventDefault()
- 
+    e.preventDefault();
+
     if (eName.trim() !== "") {
       await apiClient
         .post("/exercises", JSON.stringify({ name: eName }))
@@ -87,24 +102,71 @@ function CreateWorkoutPage() {
       setDate(new Date().toISOString().split("T")[0]);
     }
   };
+
+  const deleteExercise = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!exerciseDeleteId) {
+      if (!toast.isActive("error")) {
+        toast.error("Select an exercise");
+      }
+    } else {
+      await apiClient
+        .delete(`/exercises/${exerciseDeleteId}`)
+        .then((res) => {
+          if (res.status === 204 && !toast.isActive("deleted")) {
+            toast.success("Deleted");
+            window.location.reload();
+          }
+        })
+        .catch(() => {
+          if (!toast.isActive("error")) {
+            toast.error("Delete failed");
+          }
+        });
+    }
+  };
   return (
     <>
-      <div className="createE-group">
-        <form onSubmit={saveE}>
-          <h2>Create Exercise</h2>
+      <div className="exercise-management-wrapper">
+        <div className="createE-group">
+          <form onSubmit={saveE}>
+            <h2>Create Exercise</h2>
 
-          <label className="label">Exercise name</label>
-          <input
-            type="text"
-            className="eInput"
-            placeholder="Exercise name"
-            onChange={(e) => setEName(e.target.value)}
-            value={eName}
-          />
-          <button className="btn btn-primary" type="button" onClick={saveE}>
-            Save Exercise
-          </button>
-        </form>
+            <label className="label">Exercise name</label>
+            <input
+              type="text"
+              className="eInput"
+              placeholder="Exercise name"
+              onChange={(e) => setEName(e.target.value)}
+              value={eName}
+            />
+            <button className="btn btn-primary" type="button" onClick={saveE}>
+              Save Exercise
+            </button>
+          </form>
+        </div>
+
+        <div className="delete-exercise-container">
+          <form onSubmit={deleteExercise}>
+            <h2>Delete Exercise</h2>
+
+            <select
+              className="delete-select"
+              onChange={(e) => setExerciseDeleteId(Number(e.target.value))}
+              value={exerciseDeleteId ?? ""}
+              required
+            >
+              <option value="" disabled hidden>
+                -- Select exercise --
+              </option>
+              {exercises?.map((e) => (
+                <option value={e.id}>{e.name}</option>
+              ))}
+            </select>
+
+            <button className="delete-exercise-btn">Delete Exercise</button>
+          </form>
+        </div>
       </div>
 
       <div className="createW-group">

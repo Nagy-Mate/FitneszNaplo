@@ -212,3 +212,25 @@
 .delete-workout-btn:active {
   transform: scale(0.97);
 }
+/* KONTÉNER A KÉT BOXHOZ */
+.exercise-management-wrapper {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin: 30px auto;
+  flex-wrap: wrap;     /* mobilon egymás alá fog törni */
+}
+
+/* A két box mérete */
+.createE-group,
+.delete-exercise-container {
+  width: 350px;
+}
+.createE-group,
+.delete-exercise-container {
+  background: #fafafa;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.12);
+  text-align: center;
+}
