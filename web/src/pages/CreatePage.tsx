@@ -77,7 +77,7 @@ function CreatePage() {
       }
     })();
     setSaved(false);
-  }, []);
+  }, [auth.accessToken]);
 
   const saveE = async (e: React.FormEvent) => {
     e.preventDefault();

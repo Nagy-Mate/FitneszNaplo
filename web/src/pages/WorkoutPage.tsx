@@ -123,7 +123,7 @@ function WorkoutPage() {
       }
     })();
     setSaved(false);
-  }, []);
+  }, [auth.accessToken]);
 
   if (!workout || !exercises || !workoutE) return <p>Loading...</p>;
 
@@ -153,9 +153,9 @@ function WorkoutPage() {
           JSON.stringify({
             workoutId: workout.id,
             exerciseId: selectedEId,
-            sets,
-            reps,
-            weight,
+            sets: Number(sets),
+            reps: Number(reps),
+            weight: Number(weight),
           }),
           { headers: { Authorization: `Bearer ${auth.accessToken}` } }
         )

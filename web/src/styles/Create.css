@@ -7,6 +7,8 @@
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
   text-align: center;
+  width: 100%;
+  flex: 1;
 }
 
 .label {
@@ -62,7 +64,7 @@
   background: #fafafa;
   padding: 20px;
   border-radius: 12px;
-  box-shadow: 0 3px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
   text-align: center;
 }
 
@@ -86,7 +88,7 @@
 .delete-select:focus {
   outline: none;
   border-color: #5ea0ff;
-  box-shadow: 0 0 5px rgba(94,160,255,0.5);
+  box-shadow: 0 0 5px rgba(94, 160, 255, 0.5);
 }
 
 .delete-exercise-btn {
@@ -105,7 +107,7 @@
 .delete-exercise-btn:hover {
   background: #c62828;
   transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
 }
 
 .delete-exercise-btn:active {
@@ -116,41 +118,26 @@
   justify-content: center;
   align-items: flex-start;
   gap: 30px;
-  flex-wrap: wrap; 
+  flex-wrap: wrap;
   margin: 40px auto;
   max-width: 1200px;
 }
 
-
-.createE-group,
-.delete-exercise-container,
-.createW-group {
-  flex: 1;
-  max-width: 350px;
-  margin: 0; 
-}
-
-
-.createE-group,
-.createW-group,
 .delete-exercise-container {
   background: #fff;
   padding: 25px;
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
   text-align: center;
+  flex: 1;
+  max-width: 350px;
+  margin: 0;
+  width: 100%;
 }
 
 @media (max-width: 900px) {
   .exercise-management-wrapper {
     flex-direction: column;
     align-items: center;
-  }
-
-  .createE-group,
-  .delete-exercise-container,
-  .createW-group {
-    max-width: 500px;
-    width: 100%;
   }
 }

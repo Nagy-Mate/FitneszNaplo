@@ -109,45 +109,6 @@
   background: #428df5;
 }
 
-.popup-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.55);
-  display: none;
-  justify-content: center;
-  align-items: center;
-  z-index: 2000;
-}
-
-.popup-overlay.show {
-  display: flex;
-}
-
-.custom-confirm {
-  background: #fff;
-  padding: 25px;
-  width: 350px;
-  border-radius: 12px;
-  text-align: center;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
-  display: none;
-}
-
-.custom-confirm.show {
-  display: block;
-}
-
-.custom-confirm h3 {
-  margin-bottom: 15px;
-  font-size: 20px;
-}
-
-.custom-confirm p {
-  font-size: 14px;
-  margin-bottom: 15px;
-  color: #555;
-}
-
 .confirm-buttons {
   display: flex;
   gap: 10px;
@@ -158,16 +119,6 @@
   flex: 1;
   border-radius: 8px !important;
 }
-
-.btn-danger {
-  background: #d93a3a !important;
-  color: white;
-}
-
-.btn-danger:hover {
-  background: #c62828 !important;
-}
-
 .btn-secondary {
   background: #bdbdbd;
   color: #000;
@@ -209,19 +160,6 @@
   gap: 30px;
   margin: 30px auto;
   flex-wrap: wrap;
-}
-
-.createE-group,
-.delete-exercise-container {
-  width: 350px;
-}
-.createE-group,
-.delete-exercise-container {
-  background: #fafafa;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.12);
-  text-align: center;
 }
 
 .update-card {
@@ -282,7 +220,7 @@
 }
 
 .logout-link:active {
-  color: #b32424  !important;
+  color: #b32424 !important;
 }
 @media (max-width: 500px) {
   .update-card {
