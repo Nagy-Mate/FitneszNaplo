@@ -27,6 +27,7 @@ function CreatePage() {
   const [workouts, setWorkouts] = useState<Array<Workout>>();
 
   const [saved, setSaved] = useState(true);
+  const [refreshFlag, setRefreshFlag] = useState(false);
 
   useEffect(() => {
     if (auth.accessToken && isTokenExpired(auth.accessToken)) {
@@ -44,7 +45,7 @@ function CreatePage() {
           .catch((e) => {});
       })();
     }
-  }, [auth.accessToken]);
+  }, [auth.accessToken, refreshFlag]);
 
   useEffect(() => {
     if (!saved) return;
@@ -88,7 +89,7 @@ function CreatePage() {
           if (res.status === 201 && !toast.isActive("succ")) {
             toast.success("Saved", { toastId: "succ" });
 
-            window.location.reload();
+             setRefreshFlag((prev) => !prev);
           }
         })
         .catch((e) => {
@@ -155,7 +156,7 @@ function CreatePage() {
         .then((res) => {
           if (res.status === 204 && !toast.isActive("deleted")) {
             toast.success("Deleted");
-            window.location.reload();
+           setRefreshFlag((prev) => !prev);
           }
         })
         .catch(() => {
@@ -275,11 +276,13 @@ function CreatePage() {
               value={exerciseDeleteId ?? ""}
               required
             >
-              <option value="" disabled hidden>
+              <option key={""} value="" disabled hidden>
                 -- Select exercise --
               </option>
               {exercises?.map((e) => (
-                <option value={e.id}>{e.name}</option>
+                <option key={e.id} value={e.id}>
+                  {e.name}
+                </option>
               ))}
             </select>
 

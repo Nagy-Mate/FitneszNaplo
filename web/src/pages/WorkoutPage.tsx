@@ -26,7 +26,7 @@ function WorkoutPage() {
 
   const [date, setDate] = useState<string>();
   const [duration, setDuration] = useState<number>();
-  const [notes, seteNotes] = useState<string>();
+  const [notes, setNotes] = useState<string>();
 
   const [showPopupDW, setShowPopupDW] = useState<boolean>(false);
   const [showPopupDE, setShowPopupDE] = useState<boolean>(false);
@@ -36,6 +36,7 @@ function WorkoutPage() {
   const [workouts, setWorkouts] = useState<Array<Workout>>();
 
   const [saved, setSaved] = useState(true);
+  const [refreshFlag, setRefreshFlag] = useState(false);
 
   useEffect(() => {
     if (auth.accessToken && isTokenExpired(auth.accessToken)) {
@@ -70,7 +71,7 @@ function WorkoutPage() {
           });
       })();
     }
-  }, [id, auth.accessToken]);
+  }, [id, auth.accessToken, refreshFlag]);
 
   useEffect(() => {
     if (!workout) return;
@@ -90,7 +91,7 @@ function WorkoutPage() {
         }
       }
     })();
-  }, [workout]);
+  }, [workout, refreshFlag]);
 
   useEffect(() => {
     if (!saved) return;
@@ -98,7 +99,7 @@ function WorkoutPage() {
       try {
         const res = await apiClient.get("/workouts", {
           headers: {
-            Authorization: `Beare ${auth.accessToken}`,
+            Authorization: `Bearer ${auth.accessToken}`,
           },
         });
 
@@ -121,7 +122,7 @@ function WorkoutPage() {
         }
       }
     })();
-     setSaved(false);
+    setSaved(false);
   }, []);
 
   if (!workout || !exercises || !workoutE) return <p>Loading...</p>;
@@ -161,7 +162,7 @@ function WorkoutPage() {
         .then((res) => {
           if (res.status === 204 && !toast.isActive("saved")) {
             toast.success("Saved", { toastId: "saved" });
-            window.location.reload();
+            setRefreshFlag((prev) => !prev);
           }
         })
         .catch((e) => {
@@ -170,6 +171,10 @@ function WorkoutPage() {
             toast.error("Save failed", { toastId: "failed" });
           }
         });
+      setDeleteEId(undefined);
+      setSets("");
+      setReps("");
+      setWeight("");
     }
   };
 
@@ -201,7 +206,7 @@ function WorkoutPage() {
         .then((res) => {
           if (res.status === 204) {
             setDeleteEId(undefined);
-            window.location.reload();
+            setRefreshFlag((prev) => !prev);
           }
         })
         .catch((e) => {
@@ -248,7 +253,7 @@ function WorkoutPage() {
       });
 
       toast.success("Workout updated");
-      window.location.reload();
+      setRefreshFlag((prev) => !prev);
     } catch {
       toast.error("Update failed");
     }
@@ -343,11 +348,13 @@ function WorkoutPage() {
             value={selectedEId ?? ""}
             required
           >
-            <option value="" disabled hidden>
+            <option key={""} value="" disabled hidden>
               -- Select exercise --
             </option>
             {exercises.map((e) => (
-              <option value={e.id}>{e.name}</option>
+              <option key={e.id} value={e.id}>
+                {e.name}
+              </option>
             ))}
           </select>
 
@@ -460,7 +467,7 @@ function WorkoutPage() {
           <label className="label">Notes</label>
           <input
             type="text"
-            onChange={(e) => seteNotes(e.target.value)}
+            onChange={(e) => setNotes(e.target.value)}
             value={notes}
             className="input-update"
             placeholder="Notes..."
@@ -505,7 +512,13 @@ function WorkoutPage() {
           <p>Are you sure you want to delete this?</p>
 
           <div className="confirm-buttons">
-            <button className="btn btn-danger" onClick={deleteWE}>
+            <button
+              className="btn btn-danger"
+              onClick={() => {
+                deleteWE();
+                setShowPopupDE(false);
+              }}
+            >
               Delete
             </button>
 
