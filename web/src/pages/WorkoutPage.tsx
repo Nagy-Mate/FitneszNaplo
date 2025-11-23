@@ -147,6 +147,7 @@ function WorkoutPage() {
       setSets("");
       setReps("");
       setWeight("");
+      setRefreshFlag(prev => !prev);
     }
   };
 
@@ -214,8 +215,8 @@ function WorkoutPage() {
 
       toast.success("Workout updated");
       setRefreshFlag((prev) => !prev);
-    } catch(err) {
-       handleApiError(err, navigate, logout);
+    } catch (err) {
+      handleApiError(err, navigate, logout);
     }
     setDate(undefined);
     setDuration("");

@@ -283,7 +283,7 @@ function ProfilePage() {
         <form onSubmit={changePwd} className="pForm">
           <p>Change Password: </p>
 
-          <div>
+          <div className="input-wrapper">
             <input
               type="password"
               className="pwdInput"
@@ -302,7 +302,7 @@ function ProfilePage() {
               icon={validPwd ? faCheck : faTimes}
               className={
                 !pwd
-                  ? "hide"
+                  ? "hide input-icon"
                   : validPwd
                   ? "valid input-icon"
                   : "invalid input-icon"
@@ -327,7 +327,7 @@ function ProfilePage() {
             <span aria-label="percent">%</span>
           </p>
 
-          <div>
+          <div className="input-wrapper">
             <input
               type="password"
               className="pwdInput"
@@ -346,7 +346,7 @@ function ProfilePage() {
               icon={validMatch ? faCheck : faTimes}
               className={
                 !matchPwd
-                  ? "hide"
+                  ? "hide input-icon"
                   : validMatch
                   ? "valid input-icon"
                   : "invalid input-icon"
@@ -371,7 +371,7 @@ function ProfilePage() {
 
         <form onSubmit={changeEmail} className="pForm">
           <p>Change email: </p>
-          <div>
+          <div className="input-wrapper">
             <input
               className="pwdInput"
               type="email"
@@ -390,7 +390,7 @@ function ProfilePage() {
               icon={validEmail ? faCheck : faTimes}
               className={
                 !email
-                  ? "hide"
+                  ? "hide input-icon"
                   : validEmail
                   ? "valid input-icon"
                   : "invalid input-icon"

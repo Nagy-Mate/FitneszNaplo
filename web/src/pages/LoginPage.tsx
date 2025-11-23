@@ -34,12 +34,11 @@ function LoginPage() {
 
         navigate("/home");
       }
-
-      setEmail("");
-      setPwd("");
     } catch (err) {
       handleApiError(err, navigate, logout);
     }
+    setEmail("");
+    setPwd("");
   };
   return (
     <div className="login-container">

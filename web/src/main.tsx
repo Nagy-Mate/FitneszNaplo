@@ -28,7 +28,7 @@ createRoot(document.getElementById("root")!).render(
       </AuthProvider>
     </BrowserRouter>
     <ToastContainer
-      position="top-left"
+      position="bottom-left"
       autoClose={5000}
       hideProgressBar={false}
       newestOnTop={false}
