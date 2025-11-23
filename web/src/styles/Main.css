@@ -76,8 +76,77 @@
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
 }
 
-
 a:hover {
   cursor: pointer;
   transition: 0.25s ease;
+}
+
+.stats-container {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  gap: 25px;
+  margin: 40px auto;
+  max-width: 800px;
+  padding: 0 10px;
+}
+
+.stat-card {
+  flex: 1;
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  transition: 0.25s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
+}
+
+.stat-card h3 {
+  font-size: 20px;
+  margin-bottom: 12px;
+  font-weight: 600;
+  color: #333;
+}
+
+.stat-card p {
+  font-size: 16px;
+  margin: 6px 0;
+  color: #555;
+}
+
+@media (max-width: 650px) {
+  .stats-container {
+    flex-direction: column;
+  }
+}
+.no-workouts {
+  text-align: center;
+  margin-top: 60px;
+  padding: 30px;
+  color: #555;
+}
+
+.no-workouts h2 {
+  font-size: 26px;
+  margin-bottom: 10px;
+}
+
+.no-workouts p {
+  font-size: 16px;
+  margin-bottom: 20px;
+  color: #666;
+}
+
+.no-workouts .btn-primary {
+  padding: 12px 22px;
+  font-size: 16px;
+  border-radius: 8px;
+}
+.create-w-btn {
+  width: 200px !important;
 }
