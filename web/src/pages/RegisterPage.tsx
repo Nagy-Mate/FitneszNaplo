@@ -54,10 +54,6 @@ const RegisterPage = () => {
         .then((res) => {
           if (res.status === 201) {
             setSuccess(true);
-
-            setEmail("");
-            setPwd("");
-            setMatchPwd("");
           }
         });
     } catch (err) {
@@ -80,6 +76,9 @@ const RegisterPage = () => {
         }
       }
     }
+    setEmail("");
+    setPwd("");
+    setMatchPwd("");
   };
 
   const CountdownRedirect = () => {
@@ -131,6 +130,7 @@ const RegisterPage = () => {
                   placeholder="Email"
                   id="email"
                   autoComplete="off"
+                  value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   aria-invalid={validEmail ? "false" : "true"}

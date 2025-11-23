@@ -44,34 +44,29 @@ function ProfilePage() {
     if (auth.accessToken && isTokenExpired(auth.accessToken)) {
       logout();
       navigate("/");
-    }else{
+    } else {
       (async () => {
-      try {
-        const res = await apiClient.get("/workouts", {
-          headers: {
-            Authorization: `Beare ${auth.accessToken}`,
-          },
-        });
+        try {
+          const res = await apiClient.get("/workouts", {
+            headers: {
+              Authorization: `Beare ${auth.accessToken}`,
+            },
+          });
 
-        if (res.status === 200) {
-          setWorkouts(res.data);
-        }
-      } catch (err) {
-        const error = err as AxiosError;
-
-        if (error.status === 404) {
-          if (!toast.isActive("loginErr")) {
-            toast.info("Workouts not found", { toastId: "loginErr" });
+          if (res.status === 200) {
+            setWorkouts(res.data);
           }
-        } else if (error.status === 401) {
-          navigate("/");
-        } else if (error.status === 403) {
-          navigate("/");
-        } else {
-          navigate("/");
+        } catch (err) {
+          const error = err as AxiosError;
+          if (error.status === 401) {
+            navigate("/");
+          } else if (error.status === 403) {
+            navigate("/");
+          } else {
+            console.error(error.response?.data);
+          }
         }
-      }
-    })();
+      })();
     }
   }, [auth.accessToken]);
 
@@ -133,10 +128,10 @@ function ProfilePage() {
       toast.error("Invalid Email", { toastId: "invalidEmail" });
       return;
     }
-    if(email2 === auth.email && !toast.isActive("invalidEmail")){
-      toast.error("Enter a new email")
-      setEmail("")
-      return
+    if (email2 === auth.email && !toast.isActive("invalidEmail")) {
+      toast.error("Enter a new email");
+      setEmail("");
+      return;
     }
 
     try {
@@ -255,13 +250,24 @@ function ProfilePage() {
                     Workouts
                   </a>
                   <ul className="dropdown-menu">
-                    {workouts?.map((w) => (
-                      <li>
-                        <Link className="dropdown-item" to={`/workout/${w.id}`}>
-                          {new Date(w.date).toDateString()} - {w.notes}
-                        </Link>
-                      </li>
-                    ))}
+                    {workouts && workouts.length > 0 ? (
+                      <>
+                        {workouts?.map((w) => (
+                          <li>
+                            <Link
+                              className="dropdown-item"
+                              to={`/workout/${w.id}`}
+                            >
+                              {new Date(w.date).toDateString()} - {w.notes}
+                            </Link>
+                          </li>
+                        ))}
+                      </>
+                    ) : (
+                      <>
+                        <li className="dropdown-item">No workouts yet</li>
+                      </>
+                    )}
                   </ul>
                 </li>
                 <li className="nav-item">
@@ -415,7 +421,10 @@ function ProfilePage() {
           </button>
         </form>
 
-        <button className="btn btn-danger btn-del-user" onClick={() => setShowPopup(true)}>
+        <button
+          className="btn btn-danger btn-del-user"
+          onClick={() => setShowPopup(true)}
+        >
           Delte User
         </button>
 

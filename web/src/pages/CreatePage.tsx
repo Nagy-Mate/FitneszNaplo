@@ -72,16 +72,12 @@ function CreatePage() {
       } catch (err) {
         const error = err as AxiosError;
 
-        if (error.status === 404) {
-          if (!toast.isActive("loginErr")) {
-            toast.info("Workouts not found", { toastId: "loginErr" });
-          }
-        } else if (error.status === 401) {
+        if (error.status === 401) {
           navigate("/");
         } else if (error.status === 403) {
           navigate("/");
         } else {
-          navigate("/");
+          console.error(error.response?.data);
         }
       }
     })();
@@ -242,13 +238,24 @@ function CreatePage() {
                     Workouts
                   </a>
                   <ul className="dropdown-menu">
-                    {workouts?.map((w) => (
-                      <li>
-                        <Link className="dropdown-item" to={`/workout/${w.id}`}>
-                          {new Date(w.date).toDateString()} - {w.notes}
-                        </Link>
-                      </li>
-                    ))}
+                    {workouts && workouts.length > 0 ? (
+                      <>
+                        {workouts?.map((w) => (
+                          <li>
+                            <Link
+                              className="dropdown-item"
+                              to={`/workout/${w.id}`}
+                            >
+                              {new Date(w.date).toDateString()} - {w.notes}
+                            </Link>
+                          </li>
+                        ))}
+                      </>
+                    ) : (
+                      <>
+                        <li className="dropdown-item">No workouts yet</li>
+                      </>
+                    )}
                   </ul>
                 </li>
                 <li className="nav-item">

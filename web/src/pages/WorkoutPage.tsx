@@ -323,13 +323,24 @@ function WorkoutPage() {
                     Workouts
                   </a>
                   <ul className="dropdown-menu">
-                    {workouts?.map((w) => (
-                      <li>
-                        <Link className="dropdown-item" to={`/workout/${w.id}`}>
-                          {new Date(w.date).toDateString()} - {w.notes}
-                        </Link>
-                      </li>
-                    ))}
+                    {workouts && workouts.length > 0 ? (
+                      <>
+                        {workouts?.map((w) => (
+                          <li>
+                            <Link
+                              className="dropdown-item"
+                              to={`/workout/${w.id}`}
+                            >
+                              {new Date(w.date).toDateString()} - {w.notes}
+                            </Link>
+                          </li>
+                        ))}
+                      </>
+                    ) : (
+                      <>
+                        <li className="dropdown-item">No workouts yet</li>
+                      </>
+                    )}
                   </ul>
                 </li>
                 <li className="nav-item">
@@ -371,7 +382,6 @@ function WorkoutPage() {
               max={50}
               value={sets}
               onChange={(e) => setSets(e.target.value)}
-              
             />
             <input
               type="number"
