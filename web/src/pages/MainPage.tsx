@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthProvider";
 import apiClient from "../api/apiClient";
 import type { Workout } from "../types/Workout";
-import type { AxiosError } from "axios";
 import "../styles/Main.css";
 import { Link, useNavigate } from "react-router-dom";
 import { isTokenExpired } from "../utils/tokenCheck";
 import type { WeeklyStat } from "../types/WeeklyStat";
+import { handleApiError } from "../utils/ErrorHandle";
 
 function MainPage() {
   const { auth, logout } = useAuth();
@@ -51,15 +51,7 @@ function MainPage() {
             setWeeklyStat(weekly.data);
           }
         } catch (err) {
-          const error = err as AxiosError;
-
-          if (error.status === 401) {
-            navigate("/");
-          } else if (error.status === 403) {
-            navigate("/");
-          } else {
-            console.error(error.response?.data);
-          }
+          handleApiError(err, navigate, logout);
         }
       })();
     }

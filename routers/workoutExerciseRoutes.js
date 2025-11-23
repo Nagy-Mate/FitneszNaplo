@@ -30,8 +30,8 @@ router.get("/byId/:id", auth, (req, res) => {
 
 router.get("/byWorkoutId/:id", auth, (req, res) => {
   const workout = Workout.getWorkoutById(req.params.id);
-  if(!workout){
-    return res.status(404).send("Workout not found")
+  if (!workout) {
+    return res.status(404).send("Workout not found");
   }
   if (workout.userId != req.userId) {
     return res.status(401).send("Unauthorized");
@@ -71,6 +71,13 @@ router.post("/", auth, (req, res) => {
   }
   if (workout.userId != req.userId) {
     return res.status(401).send("Unauthorized");
+  }
+  const workoutExercises = WorkoutExercise.getWorkoutExercises();
+  const alreadyExists = workoutExercises.some(
+    (we) => we.workoutId === workoutId && we.exerciseId === exerciseId
+  );
+  if(alreadyExists){
+    return res.status(409).send("Already exists")
   }
 
   const savedWorkoutE = WorkoutExercise.saveWorkoutExercise(

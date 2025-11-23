@@ -2,18 +2,21 @@ import { useEffect, useState } from "react";
 import "../styles/LoginRegister.css";
 import { Link, useNavigate } from "react-router";
 import apiClient from "../api/apiClient.tsx";
-import type { AxiosError } from "axios";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { faTimes } from "@fortawesome/free-solid-svg-icons/faTimes";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faInfoCircle } from "@fortawesome/free-solid-svg-icons/faInfoCircle";
 import icon from "../assets/fitIcon.png";
 import { toast } from "react-toastify";
+import { handleApiError } from "../utils/ErrorHandle";
+import {  useAuth } from "../context/AuthProvider.tsx";
 
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 const RegisterPage = () => {
+  const navigate = useNavigate()
+  const {logout} = useAuth();
   const [email, setEmail] = useState<string>("");
   const [validEmail, setValidEmail] = useState<boolean>(false);
   const [emailFocus, setEmailFocus] = useState<boolean>(false);
@@ -57,24 +60,7 @@ const RegisterPage = () => {
           }
         });
     } catch (err) {
-      const error = err as AxiosError;
-      if (!error.response && !toast.isActive("registerErr")) {
-        toast.error("No Server Response", { toastId: "registerErr" });
-      } else if (
-        error.response?.status === 409 &&
-        !toast.isActive("registerErr")
-      ) {
-        toast.error("User Already Exists", { toastId: "registerErr" });
-      } else if (
-        error.response?.status === 400 &&
-        !toast.isActive("registerErr")
-      ) {
-        toast.error("Invalid input", { toastId: "registerErr" });
-      } else {
-        if (!toast.isActive("registerErr")) {
-          toast.error("Registration Failed", { toastId: "registerErr" });
-        }
-      }
+      handleApiError(err, navigate, logout);
     }
     setEmail("");
     setPwd("");

@@ -4,10 +4,10 @@ import React, { useEffect, useState } from "react";
 import "../styles/Create.css";
 import { isTokenExpired } from "../utils/tokenCheck";
 import apiClient from "../api/apiClient";
-import type { AxiosError } from "axios";
 import { toast } from "react-toastify";
 import type { Exercise } from "../types/Exercise";
 import type { Workout } from "../types/Workout";
+import { handleApiError } from "../utils/ErrorHandle";
 
 function CreatePage() {
   const { auth, logout } = useAuth();
@@ -43,14 +43,7 @@ function CreatePage() {
             }
           })
           .catch((e) => {
-            const error = e as AxiosError;
-            if (error.status === 404 && !toast.isActive("ErrE")) {
-              toast.error("Exercises not found", { toastId: "ErrE" });
-            } else {
-              if (!toast.isActive("ErrE")) {
-                toast.error("Error", { toastId: "ErrE" });
-              }
-            }
+            handleApiError(e, navigate, logout);
           });
       })();
     }
@@ -70,15 +63,7 @@ function CreatePage() {
           setWorkouts(res.data);
         }
       } catch (err) {
-        const error = err as AxiosError;
-
-        if (error.status === 401) {
-          navigate("/");
-        } else if (error.status === 403) {
-          navigate("/");
-        } else {
-          console.error(error.response?.data);
-        }
+        handleApiError(err, navigate, logout);
       }
     })();
     setSaved(false);
@@ -98,17 +83,7 @@ function CreatePage() {
           }
         })
         .catch((e) => {
-          const error = e as AxiosError;
-          console.log(error);
-
-          if (error.status === 400) {
-            if (!toast.isActive("err"))
-              toast.error("Missing some data", { toastId: "err" });
-          } else {
-            if (!toast.isActive("err")) {
-              toast.error("Error", { toastId: "err" });
-            }
-          }
+          handleApiError(e, navigate, logout);
         });
       setEName("");
     } else {
@@ -137,16 +112,7 @@ function CreatePage() {
           }
         })
         .catch((e) => {
-          const error = e as AxiosError;
-          if (error.status === 400 && !toast.isActive("saveErr")) {
-            toast.error("Missing data");
-          } else if (error.status === 401 && !toast.isActive("saveErr")) {
-            toast.error("Unauthorized");
-          } else {
-            if (!toast.isActive("saveErr")) {
-              toast.error("Save failed");
-            }
-          }
+          handleApiError(e, navigate, logout);
         });
       setDuration("");
       seteNotes("");
@@ -170,10 +136,8 @@ function CreatePage() {
             setRefreshFlag((prev) => !prev);
           }
         })
-        .catch(() => {
-          if (!toast.isActive("error")) {
-            toast.error("Delete failed");
-          }
+        .catch((e) => {
+          handleApiError(e, navigate, logout);
         });
     }
   };

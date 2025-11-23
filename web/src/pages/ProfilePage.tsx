@@ -13,6 +13,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import "../styles/Profile.css";
 import type { Workout } from "../types/Workout";
+import { handleApiError } from "../utils/ErrorHandle";
 
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -57,14 +58,7 @@ function ProfilePage() {
             setWorkouts(res.data);
           }
         } catch (err) {
-          const error = err as AxiosError;
-          if (error.status === 401) {
-            navigate("/");
-          } else if (error.status === 403) {
-            navigate("/");
-          } else {
-            console.error(error.response?.data);
-          }
+          handleApiError(err, navigate, logout);
         }
       })();
     }

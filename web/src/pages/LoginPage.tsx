@@ -2,15 +2,14 @@ import { useState } from "react";
 import "../styles/LoginRegister.css";
 import { Link, useNavigate } from "react-router";
 import apiClient from "../api/apiClient.tsx";
-import type { AxiosError } from "axios";
 import { useAuth } from "../context/AuthProvider.tsx";
 import icon from "../assets/fitIcon.png";
-import { toast } from "react-toastify";
 import type { JwtPayload } from "../types/JwtPayload.ts";
 import { jwtDecode } from "jwt-decode";
+import { handleApiError } from "../utils/ErrorHandle";
 
 function LoginPage() {
-  const { setAuth } = useAuth();
+  const { setAuth, logout } = useAuth();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState<string>("");
@@ -39,21 +38,7 @@ function LoginPage() {
       setEmail("");
       setPwd("");
     } catch (err) {
-      const error = err as AxiosError;
-      setEmail("");
-      setPwd("");
-      if (!error.response && !toast.isActive("loginErr")) {
-        toast.error("No Server Response", { toastId: "loginErr" });
-      } else if (
-        error.response?.status === 401 &&
-        !toast.isActive("loginErr")
-      ) {
-        toast.error("Unauthorized", { toastId: "loginErr" });
-      } else {
-        if (!toast.isActive("loginErr")) {
-          toast.error("Unauthorized", { toastId: "loginErr" });
-        }
-      }
+      handleApiError(err, navigate, logout);
     }
   };
   return (

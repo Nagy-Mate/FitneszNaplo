@@ -3,12 +3,12 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import type { Workout } from "../types/Workout";
 import apiClient from "../api/apiClient";
 import { useAuth } from "../context/AuthProvider";
-import type { AxiosError } from "axios";
 import { toast } from "react-toastify";
 import type { Exercise } from "../types/Exercise";
 import type { WorkoutExercise } from "../types/WorkoutExercise";
 import "../styles/Workout.css";
 import { isTokenExpired } from "../utils/tokenCheck";
+import { handleApiError } from "../utils/ErrorHandle";
 
 function WorkoutPage() {
   const { id } = useParams();
@@ -55,19 +55,8 @@ function WorkoutPage() {
               setWorkout(res.data);
             }
           })
-          .catch((e) => {
-            const error = e as AxiosError;
-
-            if (error.status === 404 && !toast.isActive("404Erro")) {
-              toast.error("Workout not found", { toastId: "404Erro" });
-
-              navigate("/home");
-            } else {
-              if (!toast.isActive("err")) {
-                toast.error("Error", { toastId: "err" });
-              }
-              navigate("/home");
-            }
+          .catch((err) => {
+            handleApiError(err, navigate, logout);
           });
       })();
     }
@@ -85,10 +74,8 @@ function WorkoutPage() {
         ]);
         setExercises(exercises.data);
         setWorkoutE(workoutE.data);
-      } catch (e) {
-        if (!toast.isActive("error")) {
-          toast.error("Error", { toastId: "error" });
-        }
+      } catch (err) {
+        handleApiError(err, navigate, logout);
       }
     })();
   }, [workout, refreshFlag]);
@@ -107,19 +94,7 @@ function WorkoutPage() {
           setWorkouts(res.data);
         }
       } catch (err) {
-        const error = err as AxiosError;
-
-        if (error.status === 404) {
-          if (!toast.isActive("loginErr")) {
-            toast.info("Workouts not found", { toastId: "loginErr" });
-          }
-        } else if (error.status === 401) {
-          navigate("/");
-        } else if (error.status === 403) {
-          navigate("/");
-        } else {
-          navigate("/");
-        }
+        handleApiError(err, navigate, logout);
       }
     })();
     setSaved(false);
@@ -165,11 +140,8 @@ function WorkoutPage() {
             setRefreshFlag((prev) => !prev);
           }
         })
-        .catch((e) => {
-          console.error(e);
-          if (!toast.isActive("failed")) {
-            toast.error("Save failed", { toastId: "failed" });
-          }
+        .catch((err) => {
+          handleApiError(err, navigate, logout);
         });
       setDeleteEId(undefined);
       setSets("");
@@ -190,10 +162,8 @@ function WorkoutPage() {
           navigate("/home");
         }
       })
-      .catch(() => {
-        if (!toast.isActive("deleted")) {
-          toast.error("Delete failed", { toastId: "deleted" });
-        }
+      .catch((err) => {
+        handleApiError(err, navigate, logout);
       });
   };
 
@@ -205,24 +175,13 @@ function WorkoutPage() {
         })
         .then((res) => {
           if (res.status === 204) {
-            setDeleteEId(undefined);
             setRefreshFlag((prev) => !prev);
           }
         })
-        .catch((e) => {
-          const error = e as AxiosError;
-          setDeleteEId(undefined);
-
-          if (error.status === 404 && !toast.isActive("dleErr")) {
-            toast.error("Not found", { toastId: "delErr" });
-          } else if (error.status === 401 && !toast.isActive("dleErr")) {
-            toast.error("Unauthorized", { toastId: "delErr" });
-          } else {
-            if (!toast.isActive("dleErr")) {
-              toast.error("Delete failed", { toastId: "delErr" });
-            }
-          }
+        .catch((err) => {
+          handleApiError(err, navigate, logout);
         });
+      setDeleteEId(undefined);
     } else {
       if (!toast.isActive("id")) {
         toast.error("Invalid id", { toastId: "id" });
@@ -255,8 +214,8 @@ function WorkoutPage() {
 
       toast.success("Workout updated");
       setRefreshFlag((prev) => !prev);
-    } catch {
-      toast.error("Update failed");
+    } catch(err) {
+       handleApiError(err, navigate, logout);
     }
     setDate(undefined);
     setDuration("");
@@ -491,7 +450,7 @@ function WorkoutPage() {
         </form>
       </div>
 
-      <div>
+      <div className="deletew-container">
         <button
           className="delete-workout-btn"
           onClick={() => setShowPopupDW(true)}
