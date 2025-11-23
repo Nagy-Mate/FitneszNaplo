@@ -18,7 +18,7 @@ function CreatePage() {
   const [date, setDate] = useState<string>(() => {
     return new Date().toISOString().split("T")[0];
   });
-  const [duration, setDuration] = useState<number>(1);
+  const [duration, setDuration] = useState<string>("");
   const [notes, seteNotes] = useState<string>("");
 
   const [exercises, setExercises] = useState<Array<Exercise>>();
@@ -42,7 +42,16 @@ function CreatePage() {
               setExercises(res.data);
             }
           })
-          .catch((e) => {});
+          .catch((e) => {
+            const error = e as AxiosError;
+            if (error.status === 404 && !toast.isActive("ErrE")) {
+              toast.error("Exercises not found", { toastId: "ErrE" });
+            } else {
+              if (!toast.isActive("ErrE")) {
+                toast.error("Error", { toastId: "ErrE" });
+              }
+            }
+          });
       })();
     }
   }, [auth.accessToken, refreshFlag]);
@@ -77,7 +86,7 @@ function CreatePage() {
       }
     })();
     setSaved(false);
-  }, [auth.accessToken]);
+  }, [auth.accessToken, saved]);
 
   const saveE = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -89,7 +98,7 @@ function CreatePage() {
           if (res.status === 201 && !toast.isActive("succ")) {
             toast.success("Saved", { toastId: "succ" });
 
-             setRefreshFlag((prev) => !prev);
+            setRefreshFlag((prev) => !prev);
           }
         })
         .catch((e) => {
@@ -106,18 +115,23 @@ function CreatePage() {
           }
         });
       setEName("");
+    } else {
+      if (!toast.isActive("err"))
+        toast.error("Enter exercie name", { toastId: "err" });
     }
   };
 
   const saveW = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (duration < 1 || duration > 360 || notes.trim() === "") {
+    const dur = Number(duration);
+
+    if (dur < 1 || dur > 360 || notes.trim() === "") {
       if (!toast.isActive("invalidInput")) {
         toast.error("Invalid input", { toastId: "invalidInput" });
       }
     } else {
       await apiClient
-        .post("/workouts", JSON.stringify({ date, duration, notes }), {
+        .post("/workouts", JSON.stringify({ date, duration: dur, notes }), {
           headers: { Authorization: `Bearer ${auth.accessToken}` },
         })
         .then((res) => {
@@ -138,7 +152,7 @@ function CreatePage() {
             }
           }
         });
-      setDuration(1);
+      setDuration("");
       seteNotes("");
       setDate(new Date().toISOString().split("T")[0]);
     }
@@ -156,7 +170,8 @@ function CreatePage() {
         .then((res) => {
           if (res.status === 204 && !toast.isActive("deleted")) {
             toast.success("Deleted");
-           setRefreshFlag((prev) => !prev);
+            setExerciseDeleteId(undefined);
+            setRefreshFlag((prev) => !prev);
           }
         })
         .catch(() => {
@@ -308,7 +323,7 @@ function CreatePage() {
               type="number"
               min={1}
               max={360}
-              onChange={(e) => setDuration(Number(e.target.value))}
+              onChange={(e) => setDuration(e.target.value)}
               value={duration}
               className="input"
             />

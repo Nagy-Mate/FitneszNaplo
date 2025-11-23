@@ -25,7 +25,7 @@ function WorkoutPage() {
   const [weight, setWeight] = useState<string>("");
 
   const [date, setDate] = useState<string>();
-  const [duration, setDuration] = useState<number>();
+  const [duration, setDuration] = useState<string>("");
   const [notes, setNotes] = useState<string>();
 
   const [showPopupDW, setShowPopupDW] = useState<boolean>(false);
@@ -229,6 +229,7 @@ function WorkoutPage() {
       }
     }
   };
+
   const updateW = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -257,6 +258,9 @@ function WorkoutPage() {
     } catch {
       toast.error("Update failed");
     }
+    setDate(undefined);
+    setDuration("");
+    setNotes(undefined);
   };
 
   const logoutBtn = () => {
@@ -367,7 +371,7 @@ function WorkoutPage() {
               max={50}
               value={sets}
               onChange={(e) => setSets(e.target.value)}
-              required
+              
             />
             <input
               type="number"
@@ -459,7 +463,7 @@ function WorkoutPage() {
             type="number"
             min={1}
             max={360}
-            onChange={(e) => setDuration(Number(e.target.value))}
+            onChange={(e) => setDuration(e.target.value)}
             value={duration}
             className="input-update"
           />

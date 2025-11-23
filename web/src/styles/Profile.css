@@ -68,7 +68,7 @@ body {
 }
 
 .saveBtn,
-.btn-danger {
+.btn-del-user {
   width: 100%;
   max-width: 400px;
   padding: 12px;
@@ -78,19 +78,23 @@ body {
   margin: 12px auto;
   display: block;
   font-weight: 600;
-  background: #d93a3a !important;
-  color: white;
 }
-.btn-danger:hover {
-  background: #c62828 !important;
+.saveBtn:hover {
+  background: #0a940e;
 }
 
 .saveBtn {
-  background: #5ea0ff;
+  background: #3ec842 !important;
   color: white;
 }
-.saveBtn:hover {
-  background: #428df5;
+
+.btn-del-user {
+  background: #d41f1f !important;
+  color: white;
+}
+
+.btn-del-user:hover {
+  background: #b71414 !important;
 }
 
 .instructions {

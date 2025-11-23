@@ -133,6 +133,11 @@ function ProfilePage() {
       toast.error("Invalid Email", { toastId: "invalidEmail" });
       return;
     }
+    if(email2 === auth.email && !toast.isActive("invalidEmail")){
+      toast.error("Enter a new email")
+      setEmail("")
+      return
+    }
 
     try {
       await apiClient
@@ -410,7 +415,7 @@ function ProfilePage() {
           </button>
         </form>
 
-        <button className="btn btn-danger" onClick={() => setShowPopup(true)}>
+        <button className="btn btn-danger btn-del-user" onClick={() => setShowPopup(true)}>
           Delte User
         </button>
 
