@@ -342,6 +342,7 @@ function WorkoutPage() {
               max={50}
               value={sets}
               onChange={(e) => setSets(e.target.value)}
+              required
             />
             <input
               type="number"
