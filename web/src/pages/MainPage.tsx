@@ -17,7 +17,7 @@ function MainPage() {
   const [weeklyStat, setWeeklyStat] = useState<WeeklyStat>();
 
   useEffect(() => {
-    if (auth.accessToken && isTokenExpired(auth.accessToken)) {
+    if ((auth.accessToken && isTokenExpired(auth.accessToken)) || !auth.accessToken) {
       logout();
       navigate("/");
     } else {

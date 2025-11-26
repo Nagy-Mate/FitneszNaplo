@@ -42,7 +42,7 @@ function ProfilePage() {
   const [workouts, setWorkouts] = useState<Array<Workout>>();
 
   useEffect(() => {
-    if (auth.accessToken && isTokenExpired(auth.accessToken)) {
+    if ((auth.accessToken && isTokenExpired(auth.accessToken)) || !auth.accessToken) {
       logout();
       navigate("/");
     } else {

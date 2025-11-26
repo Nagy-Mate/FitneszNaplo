@@ -39,7 +39,7 @@ function WorkoutPage() {
   const [refreshFlag, setRefreshFlag] = useState(false);
 
   useEffect(() => {
-    if (auth.accessToken && isTokenExpired(auth.accessToken)) {
+    if ((auth.accessToken && isTokenExpired(auth.accessToken)) || !auth.accessToken) {
       logout();
       navigate("/");
     } else {
